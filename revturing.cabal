@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Machine
   other-modules:
       Paths_revturing
   hs-source-dirs:
