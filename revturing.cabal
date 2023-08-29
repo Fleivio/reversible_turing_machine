@@ -27,6 +27,11 @@ library
   exposed-modules:
       Lib
       Machine
+      Turing.Action
+      Turing.Quadruple
+      Turing.Quintuple
+      Turing.State
+      Turing.Symbol
   other-modules:
       Paths_revturing
   hs-source-dirs:
