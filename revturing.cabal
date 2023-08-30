@@ -25,13 +25,17 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
       Machine
-      Turing.Action
-      Turing.Quadruple
-      Turing.Quintuple
-      Turing.State
-      Turing.Symbol
+      Turing.Basic.State
+      Turing.Basic.Symbol
+      Turing.Tape.Basic.Action
+      Turing.Tape.Basic.Direction
+      Turing.Tape.Basic.Tape
+      Turing.Tape.RevTape
+      Turing.Tape.TripleTape
+      Turing.Transition.Conversor
+      Turing.Transition.Transition4
+      Turing.Transition.Transition5
   other-modules:
       Paths_revturing
   hs-source-dirs:
