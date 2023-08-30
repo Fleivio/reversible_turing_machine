@@ -14,6 +14,8 @@ hasValidCondition :: Transition4 -> State -> TripleInAction -> Bool
 hasValidCondition q s tia = from q == s && inAct q == tia
 
 getTransition :: State -> TripleInAction -> [Transition4] -> Maybe Transition4
-getTransition state tia trs = let validCases = filter (\z -> hasValidCondition z state tia) trs
-                             in if null validCases then Nothing 
+getTransition state tia trs =   if null validCases 
+                                then Nothing 
                                 else Just $ head validCases
+    where 
+         validCases = filter (\z -> hasValidCondition z state tia) trs

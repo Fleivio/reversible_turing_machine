@@ -9,7 +9,7 @@ data Tape a = Tape {
     } deriving (Eq)
 
 instance Show a => Show (Tape a) where
-    show t = show (reverse (left t)) ++ "y" ++ show (right t)
+    show t = show (reverse (left t)) ++ show (right t)
 
 mkTape :: a -> Tape a
 mkTape = Tape [] []
