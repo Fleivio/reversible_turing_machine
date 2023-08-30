@@ -1,7 +1,6 @@
 module Turing.Tape.Basic.Action(OutAction(..), InAction(..)) where
 
-
-import Turing.Tape.Basic.Direction
+import Turing.Tape.Basic.Direction ( Direction )
 
 data OutAction a = Writet a | Shift Direction deriving (Eq, Show)
 

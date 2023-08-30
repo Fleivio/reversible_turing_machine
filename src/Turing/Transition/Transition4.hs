@@ -1,4 +1,4 @@
-module Turing.Transition.Transition4(Transition4(..), getQuadruple) where
+module Turing.Transition.Transition4(Transition4(..), getTransition) where
 
 import Turing.Basic.State
 import Turing.Tape.TripleTape
@@ -13,5 +13,7 @@ data Transition4 = Transition4 {
 hasValidCondition :: Transition4 -> State -> TripleInAction -> Bool
 hasValidCondition q s tia = from q == s && inAct q == tia
 
-getQuadruple :: State -> TripleInAction -> [Transition4] -> Transition4
-getQuadruple state tia = head . filter (\z -> hasValidCondition z state tia)
+getTransition :: State -> TripleInAction -> [Transition4] -> Maybe Transition4
+getTransition state tia trs = let validCases = filter (\z -> hasValidCondition z state tia) trs
+                             in if null validCases then Nothing 
+                                else Just $ head validCases

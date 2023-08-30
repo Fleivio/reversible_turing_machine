@@ -3,8 +3,8 @@ module Turing.Tape.RevTape (Tape(..), mkTape, mkTapeFromList, tapePerformOutActi
 import Turing.Tape.Basic.Action
 import Turing.Tape.Basic.Tape
 
-tapePerformInAction :: Tape a -> InAction a -> a
-tapePerformInAction tp _ = tapeRead tp
+tapePerformInAction :: Tape a -> InAction a 
+tapePerformInAction tp = Readt $ tapeRead tp 
 
 tapePerformOutAction :: Tape a -> OutAction a -> Tape a
 tapePerformOutAction tp (Writet a) = tapeWrite tp a
