@@ -1,4 +1,4 @@
-module Turing.Tape.Tape (Tape, mkTape, mkTapeFromList, tapeRead, tapeWrite) where
+module Turing.Tape.Tape (Tape, mkTape, mkTapeFromList, tapeShift, tapeRead, tapeWrite) where
 
 import Turing.Tape.Basic.GenericTape
 import Turing.Basic.Symbol
