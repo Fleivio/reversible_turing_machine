@@ -1,11 +1,11 @@
-module Turing.Tape.RevTape (Tape(..), mkTape, mkTapeFromList, tapePerformOutAction, tapePerformInAction) where
+module Turing.Tape.RevTape (GenericTape(..), mkTape, mkTapeFromList, tapePerformOutAction, tapePerformInAction) where
 
 import Turing.Tape.Basic.Action
-import Turing.Tape.Basic.Tape
+import Turing.Tape.Basic.GenericTape
 
-tapePerformInAction :: Tape a -> InAction a 
+tapePerformInAction :: GenericTape a -> InAction a 
 tapePerformInAction tp = Readt $ tapeRead tp 
 
-tapePerformOutAction :: Tape a -> OutAction a -> Tape a
+tapePerformOutAction :: GenericTape a -> OutAction a -> GenericTape a
 tapePerformOutAction tp (Writet a) = tapeWrite tp a
 tapePerformOutAction tp (Shift d) = tapeShift tp d

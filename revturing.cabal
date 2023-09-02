@@ -27,11 +27,14 @@ library
   exposed-modules:
       Turing.Basic.State
       Turing.Basic.Symbol
-      Turing.Machine
+      Turing.Machine.ClassicMachine
+      Turing.Machine.Machine
+      Turing.Machine.RevMachine
       Turing.Tape.Basic.Action
       Turing.Tape.Basic.Direction
-      Turing.Tape.Basic.Tape
+      Turing.Tape.Basic.GenericTape
       Turing.Tape.RevTape
+      Turing.Tape.Tape
       Turing.Tape.TripleTape
       Turing.Transition.Conversor
       Turing.Transition.Transition4
