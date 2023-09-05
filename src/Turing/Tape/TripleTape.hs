@@ -4,7 +4,7 @@ import Turing.Tape.RevTape
 import Turing.Tape.Basic.Action
 import Turing.Basic.Symbol
 
-type TripleTape =  (GenericTape Symbol, GenericTape Symbol, GenericTape Symbol)
+type TripleTape =  (Tape, Tape, Tape)
 
 type TripleInAction = (InAction Symbol, InAction Symbol, InAction Symbol)
 

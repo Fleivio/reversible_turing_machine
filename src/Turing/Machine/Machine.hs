@@ -5,6 +5,5 @@ class TuringMachine tm where
     tmStep :: tm -> tm
 
     tmRun :: tm -> tm
-    tmRun tm = if tmHalt tm 
-               then tm 
-               else tmRun (tmStep tm)
+    tmRun tm | tmHalt tm = tm
+    tmRun tm = tmRun . tmStep $ tm

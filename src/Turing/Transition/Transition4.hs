@@ -8,7 +8,11 @@ data Transition4 = Transition4 {
         inAct  :: TripleInAction,
         to     :: State,
         outAct :: TripleOutAction
-    } deriving (Eq, Show)
+    } deriving (Eq)
+
+instance Show Transition4 where
+    show (Transition4 f ia t oa) =
+        "(" ++ show f ++ ", " ++ show ia ++ ") -> (" ++ show t ++ ", " ++ show oa ++ ")"
 
 hasValidCondition :: Transition4 -> State -> TripleInAction -> Bool
 hasValidCondition q s tia = from q == s && inAct q == tia

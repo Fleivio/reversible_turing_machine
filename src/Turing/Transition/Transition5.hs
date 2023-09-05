@@ -1,4 +1,4 @@
-module Turing.Transition.Transition5(Transition5(..), intermediateState, hasValidCondition, getTransition) where
+module Turing.Transition.Transition5(Transition5(..), hasValidCondition, getTransition) where
 
 import Turing.Basic.State
 import Turing.Basic.Symbol
@@ -10,10 +10,11 @@ data Transition5 = Transition5 {
         to    :: State,
         wSym  :: Symbol,
         dir   :: Direction
-    } deriving (Eq, Show)
+    } deriving (Eq)
 
-intermediateState :: Transition5 -> State
-intermediateState q = from q `stCombine` to q
+instance Show Transition5 where
+    show (Transition5 f rs t ws d) =
+        "(" ++ show f ++ ", " ++ show rs ++ ") -> (" ++ show t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
 
 hasValidCondition :: Transition5 -> State -> Symbol -> Bool
 hasValidCondition q s sym = from q == s && rSym q == sym

@@ -1,33 +1,44 @@
 module Main (main) where
 
-import Turing.Machine.RevMachine
-import Turing.Tape.TripleTape
-import Turing.Transition.Transition4
+import Turing.Machine.ClassicMachine
+import Turing.Tape.Tape
 import Turing.Basic.State
-import Turing.Tape.Basic.Direction
-import Turing.Tape.Basic.Action
+import Turing.Transition.Transition5
+import Turing.Machine.Conversor
 
-tTapes :: TripleTape
-tTapes = mkTape3FromLists ("", "", "") (["a", "a", "b"], [], [])
+import Turing.Tape.Basic.Direction
+
+import qualified Turing.Machine.RevMachine as RM
+
+
+tp1 :: Tape
+tp1 = mkTape "0" --["1", "0", "0", "1"] 
 
 q0 :: State
-q0 = State "q0"
-
+q0 = State "0"
 q1 :: State
-q1 = State "q1"
-
+q1 = State "1"
 q2 :: State
-q2 = State "q2"
+q2 = State "2"
+q3 :: State
+q3 = State "3"
+qH :: State
+qH = State "H"
 
-tTransitions :: [Transition4]
-tTransitions = [
-        Transition4 q0 (Readt "a", Bar, Bar) q1 (Writet "a", Shift S, Writet "boa noite" ),
-        Transition4 q0 (Readt "b", Bar, Bar) q2 (Shift R, Writet "m", Shift S),
-        Transition4 q1 (Bar, Bar, Bar) q0 (Shift R, Shift S, Shift S)
-    ]
+tab' :: [Transition5]
+tab' = [
+        Transition5 q0 "0" q1 "1" R,
+        Transition5 q0 "1" q1 "1" L,
+        Transition5 q1 "0" q0 "1" L,
+        Transition5 q1 "1" q2 "0" L,
+        Transition5 q2 "0" qH "1" R,
+        Transition5 q2 "1" q3 "1" L,
+        Transition5 q3 "0" q3 "1" R,
+        Transition5 q3 "1" q0 "0" R
+        ]
 
-tTest :: RevMachine
-tTest = mkTm tTapes tTransitions q0 [q2]
+-- tTest :: RM.RevMachine
+tTest = toReversible $ mkTmClassic tp1 tab' q0 qH
 
 main :: IO ()
 main = print $ tmRun tTest
