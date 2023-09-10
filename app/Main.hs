@@ -12,7 +12,7 @@ import qualified Turing.Machine.RevMachine as RM
 
 
 tp1 :: Tape
-tp1 = mkTape "0" --["1", "0", "0", "1"] 
+tp1 = mkTape "0"
 
 q0 :: State
 q0 = State "0"

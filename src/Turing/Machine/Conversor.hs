@@ -12,17 +12,18 @@ import Turing.Basic.Symbol
 
 import Turing.Basic.State
 
--- mkTm :: TripleTape -> [Transition4] -> State -> [State] -> RevMachine
 
 toReversible :: CM.ClassicMachine -> RM.RevMachine
 toReversible cm = RM.mkTm tripleTape newTransitions (CM.currentState cm) (CM.acceptState cm)
     where
-        newTransitions = concatMap (\(x, y) -> [x, y]) tuples
-            where tuples = map toQuadruple (CM.transitions cm)
-        tripleTape = (CM.tape cm, mkTape (mempty :: Symbol), mkTape (mempty :: Symbol) )
+        newTransitions = computeTransitions ++ outputTransitions
+        computeTransitions = genComputeTransitions (CM.transitions cm)
+        (outputTransitions, cf) = genOutputCopyTransitions (CM.acceptState cm) ["a", "b"]
+        
+        tripleTape = (CM.tape cm, mkTape memptySymbol, mkTape memptySymbol )
 
--- outputCopyTransitions :: [T4.Transition4]
--- outputCopyTransitions = undefined
+
+
 
 -- inBetweenState :: State
 -- inBetweenState = State "inBetweenState"
