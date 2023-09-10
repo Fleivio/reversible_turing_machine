@@ -24,10 +24,10 @@ getTransition state tia trs =   if null validCases
     where 
          validCases = filter (\z -> hasValidCondition z state tia) trs
 
-inverse :: Transition4 -> Transition4
-inverse (Transition4 fromState inAction toState outAction)
-    = Transition4 newToState (invertOut outAction) newFromState (invertIn outAction)
+-- inverse :: Transition4 -> Transition4
+-- inverse (Transition4 fromState inAction toState outAction)
+--     = Transition4 newToState (invertOut outAction) newFromState (invertIn outAction)
 
-    where
-        newToState = State $ "inv " ++ stGetName toState
-        newFromState = State $ "inv " ++ stGetName fromState
+--     where
+--         newToState = State $ "inv " ++ stGetName toState
+--         newFromState = State $ "inv " ++ stGetName fromState
