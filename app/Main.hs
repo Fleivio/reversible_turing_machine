@@ -4,12 +4,13 @@ import Turing.Machine.ClassicMachine
 import Turing.Tape.Tape
 import Turing.Basic.State
 import Turing.Transition.Transition5
-import Turing.Machine.Conversor
+--import Turing.Machine.Conversor
 
 import Turing.Tape.Basic.Direction
 
-import qualified Turing.Machine.RevMachine as RM
+--import qualified Turing.Machine.RevMachine as RM
 
+import Turing.Reader (mkMachineDefinition)
 
 tp1 :: Tape
 tp1 = mkTape "0"
@@ -41,5 +42,9 @@ tab' = [
 tTest = toReversible $ mkTmClassic tp1 tab' q0 qH
 
 main :: IO ()
-main = print $ tmRun tTest
+main = do
+        file <- readFile "../entradas/entrada-quintupla.txt"
+        mkMachineDefinition $ lines file
+
+--main = print $ tmRun tTest
        

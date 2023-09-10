@@ -2,7 +2,7 @@ module Turing.Transition.Transition5(Transition5(..), hasValidCondition, getTran
 
 import Turing.Basic.State
 import Turing.Basic.Symbol
-import Turing.Tape.Basic.Direction
+import Turing.Tape.Basic.Direction ( Direction )
 
 data Transition5 = Transition5 {
         from  :: State,
