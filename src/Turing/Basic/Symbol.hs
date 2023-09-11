@@ -4,4 +4,4 @@ module Turing.Basic.Symbol(Symbol, memptySymbol) where
 type Symbol = String
 
 memptySymbol :: Symbol
-memptySymbol = mempty
+memptySymbol = "B"

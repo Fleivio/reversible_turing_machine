@@ -14,11 +14,13 @@ import Turing.Basic.State
 
 
 toReversible :: CM.ClassicMachine -> RM.RevMachine
-toReversible cm = RM.mkTm tripleTape newTransitions (CM.currentState cm) (CM.acceptState cm)
+toReversible cm =
+    RM.mkTm tripleTape newTransitions (CM.currentState cm) (CM.acceptState cm) alp
     where
+        alp = CM.alphabet cm
         newTransitions = computeTransitions ++ outputTransitions
         computeTransitions = genComputeTransitions (CM.transitions cm)
-        (outputTransitions, cf) = genOutputCopyTransitions (CM.acceptState cm) ["a", "b"]
+        (outputTransitions, cf) = genOutputCopyTransitions (CM.acceptState cm) (filter (/= memptySymbol) alp)
         
         tripleTape = (CM.tape cm, mkTape memptySymbol, mkTape memptySymbol )
 

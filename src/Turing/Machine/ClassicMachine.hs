@@ -4,6 +4,7 @@ import Turing.Basic.State
 import Turing.Transition.Transition5
 
 import Turing.Tape.Tape
+import Turing.Basic.Symbol
 
 import Turing.Machine.Machine
 
@@ -13,6 +14,7 @@ data ClassicMachine = ClassTm {
         currentState :: State,
         acceptState :: State,
         counter :: Int,
+        alphabet :: [Symbol],
         halt :: Bool
     }
 
@@ -26,7 +28,7 @@ instance TuringMachine ClassicMachine where
     tmHalt = halt
 
     tmStep tm | halt tm = tm
-    tmStep tm@(ClassTm tp trs st _ _ _) = 
+    tmStep tm@(ClassTm tp trs st _ _ _ _) = 
         case transition of
             Nothing -> tm{halt = True}
             Just tr -> tmStep' tm tr
@@ -34,8 +36,8 @@ instance TuringMachine ClassicMachine where
             transition = getTransition st readSymbs trs
             readSymbs = tapeRead tp
 
-mkTmClassic :: Tape -> [Transition5] -> State -> State -> ClassicMachine
-mkTmClassic tp trs st acc = ClassTm tp trs st acc 0 False
+mkTmClassic :: Tape -> [Transition5] -> State -> State -> [Symbol] -> ClassicMachine
+mkTmClassic tp trs st acc alp = ClassTm tp trs st acc 0 alp False
 
 tmStep' :: ClassicMachine -> Transition5 -> ClassicMachine
 tmStep' tm (Transition5 _ _ nextState writeSymbs dir1) = 

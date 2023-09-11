@@ -3,6 +3,7 @@ module Turing.Machine.RevMachine(RevMachine(..), tmRun, mkTm) where
 import Turing.Tape.TripleTape
 import Turing.Transition.Transition4
 import Turing.Basic.State
+import Turing.Basic.Symbol
 
 import Turing.Machine.Machine
 
@@ -12,6 +13,7 @@ data RevMachine = RevTm {
         currentState :: State,
         acceptState :: State,
         counter :: Int,
+        alphabet :: [Symbol],
         halt :: Bool
     }
 
@@ -25,14 +27,14 @@ instance Show RevMachine where
         where 
                 (t1, t2, t3) = tapes tm
 
-mkTm :: TripleTape -> [Transition4] -> State -> State -> RevMachine
-mkTm tps trs st acc = RevTm tps trs st acc 0 False
+mkTm :: TripleTape -> [Transition4] -> State -> State -> [Symbol] -> RevMachine
+mkTm tps trs st acc alp = RevTm tps trs st acc 0 alp False
 
 instance TuringMachine RevMachine where 
     tmHalt = halt
 
     tmStep tm | halt tm = tm
-    tmStep tm@(RevTm tps trs st _ _ _) = 
+    tmStep tm@(RevTm tps trs st _ _ _ _) = 
         case transition of
             Nothing -> tm{halt = True}
             Just tr -> tmStep' tm tr
