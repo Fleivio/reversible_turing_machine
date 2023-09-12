@@ -1,7 +1,7 @@
-module Turing.Basic.Symbol (Symbol, memptySymbol) where
+module Turing.Basic.Symbol (Symbol, emptySymb) where
 
 -- must implement Monoid contatenation and empty
 type Symbol = String
 
-memptySymbol :: Symbol
-memptySymbol = "B"
+emptySymb :: Symbol
+emptySymb = "B"

@@ -8,4 +8,4 @@ stGetName :: State -> Symbol
 stGetName (State s) = s
 
 stCombine :: State -> State -> Symbol -> State
-stCombine s1 s2 s = State $ stGetName s1 <> "." <> stGetName s2 <> "r" <> s
+stCombine s1 s2 s = State $ stGetName s1 <> "." <> stGetName s2 <> "." <> s

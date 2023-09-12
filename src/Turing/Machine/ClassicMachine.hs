@@ -41,7 +41,7 @@ mkTmClassic :: Tape -> [Transition5] -> State -> State -> [Symbol] -> ClassicMac
 mkTmClassic tp trs st acc alp = ClassTm tp trs st acc 0 alp False
 
 tmStep' :: ClassicMachine -> Transition5 -> ClassicMachine
-tmStep' tm (Transition5 _ _ nextState writeSymbs dir1) =
+tmStep' tm (Tr5 _ _ nextState writeSymbs dir1) =
   tm
     { tape = newTape,
       currentState = nextState,

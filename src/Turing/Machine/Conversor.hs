@@ -13,6 +13,6 @@ toReversible cm =
     alp = CM.alphabet cm
     newTransitions = computeTransitions ++ outputTransitions
     computeTransitions = genComputeTransitions (CM.transitions cm)
-    (outputTransitions, cf) = genOutputCopyTransitions (CM.acceptState cm) alp
+    (outputTransitions, _) = genOutputCopyTransitions (CM.acceptState cm) alp
 
-    tripleTape = (CM.tape cm, mkTape memptySymbol, mkTape memptySymbol)
+    tripleTape = (CM.tape cm, mkTape emptySymb, mkTape emptySymb)

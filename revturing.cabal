@@ -25,6 +25,8 @@ source-repository head
 
 library
   exposed-modules:
+      Turing.Basic.Action
+      Turing.Basic.Direction
       Turing.Basic.State
       Turing.Basic.Symbol
       Turing.Machine.ClassicMachine
@@ -32,8 +34,6 @@ library
       Turing.Machine.Machine
       Turing.Machine.RevMachine
       Turing.Reader
-      Turing.Tape.Basic.Action
-      Turing.Tape.Basic.Direction
       Turing.Tape.RevTape
       Turing.Tape.Tape
       Turing.Tape.TripleTape

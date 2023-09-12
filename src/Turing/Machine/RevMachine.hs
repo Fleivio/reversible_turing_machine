@@ -47,11 +47,11 @@ instance TuringMachine RevMachine where
       readSymbs = tape3Read tps
 
 tmStep' :: RevMachine -> Transition4 -> RevMachine
-tmStep' tm (Transition4 _ _ nextState action) =
+tmStep' tm (Tr4 _ _ nextState action) =
   tm
     { tapes = newTapes,
       currentState = nextState,
       counter = counter tm + 1
     }
   where
-    newTapes = tape3PerformOutAction (tapes tm) action
+    newTapes = tape3Perform (tapes tm) action

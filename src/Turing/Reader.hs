@@ -1,8 +1,11 @@
-module Turing.Reader (mkMachineDefinition) where
+module Turing.Reader (readTm) where
 
 import Turing.Basic.State (State (..))
-import Turing.Tape.Basic.Direction (Direction (L, R))
+import Turing.Basic.Direction (Direction (L, R))
 import Turing.Transition.Transition5 (Transition5 (..))
+import Turing.Machine.ClassicMachine (mkTmClassic, ClassicMachine)
+import Turing.Tape.Tape (mkTapeFromList)
+import Turing.Basic.Symbol
 
 replace :: (Eq a) => a -> a -> [a] -> [a]
 replace something replacement =
@@ -14,7 +17,7 @@ splitBy by =
 
 mkTransition :: String -> Transition5
 mkTransition str =
-  Transition5
+  Tr5
     { from = State $ head symbols,
       rSym = symbols !! 1,
       to = State $ symbols !! 2,
@@ -32,3 +35,11 @@ mkMachineDefinition machineString = (states, alphabet, tapeAlphabet, transitions
     tapeAlphabet = words $ machineString !! 3
     transitions = map mkTransition (init $ drop 4 machineString)
     input = last machineString
+
+readTm :: String -> IO ClassicMachine
+readTm filePath = do
+  file <- readFile filePath
+  let (states, _, tapeAlphabet, transitions', input) = mkMachineDefinition $ lines file
+  let tape' = mkTapeFromList emptySymb (map (: []) input)
+  let tm = mkTmClassic tape' transitions' (head states) (last states) tapeAlphabet
+  return tm

@@ -1,7 +1,7 @@
 module Turing.Tape.Tape (Tape (..), mkTape, content, mkTapeFromList, tapeRead, tapeWrite, tapeShift) where
 
 import Turing.Basic.Symbol
-import Turing.Tape.Basic.Direction
+import Turing.Basic.Direction
 
 data Tape = Tape
   { left :: [Symbol],

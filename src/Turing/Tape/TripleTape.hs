@@ -1,26 +1,33 @@
-module Turing.Tape.TripleTape (TripleInAction, TripleOutAction, TripleTape, mkTape3, mkTape3FromLists, tape3Read, tape3PerformOutAction) where
+module Turing.Tape.TripleTape (TripleInAction, TripleOutAction, TripleTape, mkTape3, mkTape3FromLists, tape3Read, tape3Perform) where
 
+import Turing.Basic.Action
 import Turing.Basic.Symbol
-import Turing.Tape.Basic.Action
 import Turing.Tape.RevTape
 
 type TripleTape = (Tape, Tape, Tape)
 
-type TripleInAction = (InAction Symbol, InAction Symbol, InAction Symbol)
+type TripleInAction = (InAction, InAction, InAction)
 
-type TripleOutAction = (OutAction Symbol, OutAction Symbol, OutAction Symbol)
+type TripleOutAction = (OutAction, OutAction, OutAction)
 
 type TripleSymbol = (Symbol, Symbol, Symbol)
 
 mkTape3 :: TripleSymbol -> TripleTape
-mkTape3 (a, b, c) = (,,) (mkTape a) (mkTape b) (mkTape c)
+mkTape3 symbs = mkTape <+> symbs
 
 mkTape3FromLists :: TripleSymbol -> ([Symbol], [Symbol], [Symbol]) -> TripleTape
-mkTape3FromLists (a, b, c) (l1, l2, l3) = (,,) (mkTapeFromList a l1) (mkTapeFromList b l2) (mkTapeFromList c l3)
+mkTape3FromLists symbs tapes = 
+  uncurry mkTapeFromList <+> zipTrip symbs  tapes
 
 tape3Read :: TripleTape -> TripleInAction
-tape3Read (l, m, r) = (tapePerformInAction l, tapePerformInAction m, tapePerformInAction r)
+tape3Read tapes = tapePerformInAction <+> tapes
 
-tape3PerformOutAction :: TripleTape -> TripleOutAction -> TripleTape
-tape3PerformOutAction (l, m, r) (oa1, oa2, oa3) =
-  (,,) (tapePerformOutAction l oa1) (tapePerformOutAction m oa2) (tapePerformOutAction r oa3)
+tape3Perform :: TripleTape -> TripleOutAction -> TripleTape
+tape3Perform tapes actions =
+  uncurry tapePerformOutAction <+> zipTrip tapes actions
+
+(<+>) :: (a -> b) -> (a, a, a) -> (b, b, b)
+f <+> (a, b, c) = (f a, f b, f c)
+
+zipTrip :: (a,a,a) -> (b,b,b) -> ((a,b), (a,b), (a,b))
+zipTrip (a1, a2, a3) (b1, b2, b3) = ((a1, b1), (a2, b2), (a3, b3))
