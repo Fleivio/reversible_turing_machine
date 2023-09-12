@@ -1,4 +1,4 @@
-module Turing.Basic.State(State(..), stGetName, stCombine) where
+module Turing.Basic.State (State (..), stGetName, stCombine) where
 
 import Turing.Basic.Symbol (Symbol)
 
