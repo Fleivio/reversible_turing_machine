@@ -82,7 +82,7 @@ genOutputCopyTransitions af alphabet =
         { from = b2l,
           inAct = (Bar, Bar, Bar),
           to = b2,
-          outAct = (Shift R, Shift S, Shift R)
+          outAct = (Shift L, Shift S, Shift L)
         }
     b2b2l =
       flip
