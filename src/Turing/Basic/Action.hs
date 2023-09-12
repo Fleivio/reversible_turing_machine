@@ -3,9 +3,14 @@ module Turing.Basic.Action (OutAction (..), InAction (..)) where
 import Turing.Basic.Direction (Direction)
 import Turing.Basic.Symbol (Symbol)
 
-data OutAction = Writet Symbol | Shift Direction deriving Eq
+data OutAction
+  = Writet Symbol
+  | Shift Direction
+  deriving (Eq)
 
-data InAction = Readt Symbol | Bar
+data InAction
+  = Readt Symbol
+  | Bar
 
 instance Show InAction where
   show (Readt s) = "'" ++ s ++ "'"

@@ -19,14 +19,10 @@ data RevMachine = RevTm
 instance Show RevMachine where
   show tm =
     unlines (map show (transitions tm))
-      ++ show t1
-      ++ "\n"
-      ++ show t2
-      ++ "\n"
-      ++ show t3
-      ++ "\n"
-      ++ show (currentState tm)
-      ++ "\n"
+      ++ show t1 ++ "\n"
+      ++ show t2 ++ "\n"
+      ++ show t3 ++ "\n"
+      ++ show (currentState tm) ++ "\n"
       ++ show (counter tm)
     where
       (t1, t2, t3) = tapes tm

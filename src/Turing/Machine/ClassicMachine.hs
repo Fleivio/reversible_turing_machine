@@ -19,10 +19,8 @@ data ClassicMachine = ClassTm
 instance Show ClassicMachine where
   show tm =
     unlines (map show (transitions tm))
-      ++ show (tape tm)
-      ++ "\n"
-      ++ show (currentState tm)
-      ++ "\n"
+      ++ show (tape tm) ++ "\n"
+      ++ show (currentState tm) ++ "\n"
       ++ show (counter tm)
 
 instance TuringMachine ClassicMachine where
