@@ -2,7 +2,10 @@ module Turing.Basic.State (State (..), stGetName, stCombine) where
 
 import Turing.Basic.Symbol (Symbol)
 
-newtype State = State Symbol deriving (Eq, Show)
+newtype State = State Symbol deriving (Eq)
+
+instance Show State where
+    show (State s) = s
 
 stGetName :: State -> Symbol
 stGetName (State s) = s

@@ -14,7 +14,7 @@ data InAction
 
 instance Show InAction where
   show (Readt s) = "'" ++ s ++ "'"
-  show Bar = "*"
+  show Bar = "/"
 
 instance Show OutAction where
   show (Writet s) = "'" ++ s ++ "'"

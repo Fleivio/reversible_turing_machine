@@ -15,8 +15,11 @@ data Transition5 = Tr5
   deriving (Eq)
 
 instance Show Transition5 where
-  show (Tr5 f rs t ws d) =
-    "(" ++ show f ++ ", " ++ show rs ++ ") -> (" ++ show t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
+  show (Tr5 f rs t ws d) = leftSide ++ alignment ++ " -> " ++ rightSide
+    where
+      alignment = replicate (8 - length leftSide) ' '
+      leftSide = "(" ++ show f ++ ", " ++ show rs ++ ")"
+      rightSide = "(" ++ show t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
 
 hasValidCondition :: Transition5 -> State -> Symbol -> Bool
 hasValidCondition tr state symb = from tr == state && rSym tr == symb

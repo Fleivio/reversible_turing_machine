@@ -34,6 +34,7 @@ genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
+
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
 genOutputCopyTransitions af alphabet =
   ([afb1l, b1lb1, b1b2l, b2lb2, b2cf] ++ b1b1l ++ b2b2l, cf)
