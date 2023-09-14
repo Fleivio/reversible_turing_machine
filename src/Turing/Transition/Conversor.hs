@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
 {-# HLINT ignore "Redundant flip" #-}
-module Turing.Transition.Conversor (toQuadruple, genComputeTransitions, genOutputCopyTransitions) where
+module Turing.Transition.Conversor (toQuadruple, genComputeTransitions, genOutputCopyTransitions, shiftLeftTransitions) where
 
 import Turing.Basic.Action
 import Turing.Basic.Direction
@@ -9,6 +9,7 @@ import Turing.Basic.State
 import Turing.Basic.Symbol
 import Turing.Transition.Transition4
 import qualified Turing.Transition.Transition5 as T5
+import Turing.Transition.Transition5 (Transition5(Tr5))
 
 toQuadruple :: T5.Transition5 -> (Transition4, Transition4)
 toQuadruple q = (first, second)
@@ -34,6 +35,37 @@ genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
+shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
+shiftLeftTransitions intermediate alph = (transitions, finalState)
+  where 
+    transitions = tr1 ++ tr2 ++ [tr3]
+    finalState = State "af"
+    st1 = State "st1"
+    tr1 = map (\x -> Tr5 
+              { 
+                T5.from = intermediate,
+                T5.rSym = x,
+                T5.to = st1,
+                T5.wSym = x,
+                T5.dir = L
+              }) alph 
+    tr2 = map (\x -> Tr5 
+              { 
+                T5.from = st1,
+                T5.rSym = x,
+                T5.to = st1,
+                T5.wSym = x,
+                T5.dir = L
+              }) $ filter (/= emptySymb) alph
+    tr3 = Tr5 
+          { 
+            T5.from = st1,
+            T5.rSym = emptySymb,
+            T5.to = finalState,
+            T5.wSym = emptySymb,
+            T5.dir = S
+          }
+    
 
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
 genOutputCopyTransitions af alphabet =
