@@ -45,9 +45,9 @@ instance TuringMachine RevMachine where
 tmStep' :: RevMachine -> Transition4 -> RevMachine
 tmStep' tm (Tr4 _ _ nextState action) =
   tm
-    { tapes = newTapes,
+    { tapes        = newTapes,
       currentState = nextState,
-      counter = counter tm + 1
+      counter      = counter tm + 1
     }
   where
     newTapes = tape3Perform (tapes tm) action

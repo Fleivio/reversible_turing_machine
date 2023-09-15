@@ -11,21 +11,21 @@ import Turing.Transition.Conversor
 toReversible' :: CM.ClassicMachine -> RevMachine
 toReversible' 
   ClassTm {
-    CM.tape = cTape,
-    CM.transitions = cTransitions,
+    CM.tape         = cTape,
+    CM.transitions  = cTransitions,
     CM.currentState = cCurrentState,
-    CM.acceptState = cAcceptState,
-    CM.alphabet = cAlp
+    CM.acceptState  = cAcceptState,
+    CM.alphabet     = cAlp
   } =
   mkTm tripleTape newTransitions cCurrentState cAcceptState cAlp
   where
-    tripleTape = (cTape, mkTape emptySymb, mkTape emptySymb)
+    tripleTape     = (cTape, mkTape emptySymb, mkTape emptySymb)
     newTransitions = computeTransitions ++ outputTransitions ++ retraceTransitions
       where
-        nState = from $ getLastTransition cAcceptState computeTransitions
-        computeTransitions = genComputeTransitions cTransitions
+        nState                  = from $ getLastTransition cAcceptState computeTransitions
+        computeTransitions      = genComputeTransitions cTransitions
         (outputTransitions, cf) = genOutputCopyTransitions cAcceptState cAlp
-        retraceTransitions = genReverseTransitions cf nState computeTransitions
+        retraceTransitions      = genReverseTransitions cf nState computeTransitions
 
 toReversible :: CM.ClassicMachine -> RevMachine
 toReversible cm = toReversible' (toStandard cm)

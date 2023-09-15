@@ -20,16 +20,16 @@ mkTapeFromList :: Symbol -> [Symbol] -> Tape
 mkTapeFromList b l = Tape [] l b
 
 tapeRead :: Tape -> Symbol
-tapeRead (Tape _ [] b) = b
+tapeRead (Tape _ [] b)      = b
 tapeRead (Tape _ (x : _) _) = x
 
 tapeWrite :: Tape -> Symbol -> Tape
-tapeWrite (Tape l [] b) v = Tape l [v] b
+tapeWrite (Tape l [] b) v      = Tape l [v] b
 tapeWrite (Tape l (_ : r) b) v = Tape l (v : r) b
 
 tapeShift :: Tape -> Direction -> Tape
-tapeShift (Tape [] rs b) L = Tape [] (b : rs) b
-tapeShift (Tape ls [] b) R = Tape (b : ls) [] b
+tapeShift (Tape [] rs b) L       = Tape [] (b : rs) b
+tapeShift (Tape ls [] b) R       = Tape (b : ls) [] b
 tapeShift (Tape (l : ls) rs b) L = Tape ls (l : rs) b
 tapeShift (Tape ls (r : rs) b) R = Tape (r : ls) rs b
 tapeShift tp S = tp

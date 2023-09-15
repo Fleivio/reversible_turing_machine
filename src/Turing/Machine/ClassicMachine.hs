@@ -33,7 +33,7 @@ instance TuringMachine ClassicMachine where
       Just tr -> tmStep' tm tr
     where
       transition = getTransition st readSymbs trs
-      readSymbs = tapeRead tp
+      readSymbs  = tapeRead tp
 
 mkTmClassic :: Tape -> [Transition5] -> State -> State -> [Symbol] -> ClassicMachine
 mkTmClassic tp trs st acc alp = ClassTm tp trs st acc 0 alp False
@@ -41,9 +41,9 @@ mkTmClassic tp trs st acc alp = ClassTm tp trs st acc 0 alp False
 tmStep' :: ClassicMachine -> Transition5 -> ClassicMachine
 tmStep' tm (Tr5 _ _ nextState writeSymbs dir1) =
   tm
-    { tape = newTape,
+    { tape         = newTape,
       currentState = nextState,
-      counter = counter tm + 1
+      counter      = counter tm + 1
     }
   where
     newTape = tapeShift (tapeWrite (tape tm) writeSymbs) dir1

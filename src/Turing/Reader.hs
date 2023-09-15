@@ -20,9 +20,9 @@ mkTransition str =
   Tr5
     { from = State $ head symbols,
       rSym = symbols !! 1,
-      to = State $ symbols !! 2,
+      to   = State $ symbols !! 2,
       wSym = symbols !! 3,
-      dir = if symbols !! 4 == "R" then R else L
+      dir  = if symbols !! 4 == "R" then R else L
     }
   where
     symbols = splitBy ',' $ replace '=' ',' $ filter (`notElem` "()") str
@@ -30,16 +30,16 @@ mkTransition str =
 mkMachineDefinition :: [String] -> ([State], [String], [String], [Transition5], String)
 mkMachineDefinition machineString = (states, alphabet, tapeAlphabet, transitions, input)
   where
-    states = map State (words $ machineString !! 1)
-    alphabet = words $ machineString !! 2
+    states       = map State (words $ machineString !! 1)
+    alphabet     = words $ machineString !! 2
     tapeAlphabet = words $ machineString !! 3
-    transitions = map mkTransition (init $ drop 4 machineString)
-    input = last machineString
+    transitions  = map mkTransition (init $ drop 4 machineString)
+    input        = last machineString
 
 readTm :: String -> IO ClassicMachine
 readTm filePath = do
   file <- readFile filePath
   let (states, _, tapeAlphabet, transitions', input) = mkMachineDefinition $ lines file
   let tape' = mkTapeFromList emptySymb (map (: []) input)
-  let tm = mkTmClassic tape' transitions' (head states) (last states) tapeAlphabet
+  let tm    = mkTmClassic tape' transitions' (head states) (last states) tapeAlphabet
   return tm

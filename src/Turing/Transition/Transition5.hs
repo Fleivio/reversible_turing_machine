@@ -18,7 +18,7 @@ instance Show Transition5 where
   show (Tr5 f rs t ws d) = leftSide ++ alignment ++ " -> " ++ rightSide
     where
       alignment = replicate (8 - length leftSide) ' '
-      leftSide = "(" ++ show f ++ ", " ++ show rs ++ ")"
+      leftSide  = "(" ++ show f ++ ", " ++ show rs ++ ")"
       rightSide = "(" ++ show t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
 
 hasValidCondition :: Transition5 -> State -> Symbol -> Bool

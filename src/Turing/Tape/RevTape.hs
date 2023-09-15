@@ -8,4 +8,4 @@ tapePerformInAction = Readt . tapeRead
 
 tapePerformOutAction :: Tape -> OutAction -> Tape
 tapePerformOutAction tp (Writet a) = tapeWrite tp a
-tapePerformOutAction tp (Shift d) = tapeShift tp d
+tapePerformOutAction tp (Shift d)  = tapeShift tp d

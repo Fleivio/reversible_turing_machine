@@ -21,7 +21,7 @@ instance Show Transition4 where
       arrowAlign = 40
 
       alignment = align arrowAlign leftSide
-      leftSide = "(" ++ show f ++ alig1 ++ ", " ++ show ia ++ ")"
+      leftSide  = "(" ++ show f ++ alig1 ++ ", " ++ show ia ++ ")"
         where 
           alig1 = align stateAlign (show f)
       rightSide = "(" ++ show t ++ alig2 ++ ", " ++ show oa ++ ")"
@@ -43,23 +43,23 @@ getLastTransition lastState trs = head $ filter (\x -> to x == lastState) trs
 reverseQuadruple :: Transition4 -> Transition4
 reverseQuadruple
   Tr4
-    { from = stFrom,
-      inAct = inAction,
-      to = stTo,
+    { from   = stFrom,
+      inAct  = inAction,
+      to     = stTo,
       outAct = outAction
     } = case (inAction, outAction) of
       ((Readt r1, Bar, _), (Writet w1, Shift R, _))
         -> Tr4
-          { from = inverseState stTo,
-            inAct = (Readt w1, Bar, readEmpty),
-            to = inverseState stFrom,
+          { from   = inverseState stTo,
+            inAct  = (Readt w1, Bar, readEmpty),
+            to     = inverseState stFrom,
             outAct = (Writet r1, Shift L, writeEmpty)
           }
       ((Bar, _, Bar), (Shift dir, Writet interS, Shift S))
         -> Tr4
-            { from = inverseState stTo,
-              inAct = (Bar, Readt interS, Bar),
-              to = inverseState stFrom,
+            { from   = inverseState stTo,
+              inAct  = (Bar, Readt interS, Bar),
+              to     = inverseState stFrom,
               outAct = (Shift (revDir dir), writeEmpty, Shift S)
             }
       _ -> error "Invalid quadruple to reverse"
