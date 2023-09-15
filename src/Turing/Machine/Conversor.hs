@@ -2,22 +2,32 @@ module Turing.Machine.Conversor (toReversible, toStandard) where
 
 import Turing.Basic.Symbol
 import qualified Turing.Machine.ClassicMachine as CM
+import Turing.Machine.ClassicMachine (ClassicMachine(ClassTm))
 import Turing.Machine.RevMachine
 import Turing.Tape.Tape
 import Turing.Transition.Conversor
-import Turing.Basic.State
+
+toReversible' :: CM.ClassicMachine -> RevMachine
+toReversible' 
+  ClassTm {
+    CM.tape = cTape,
+    CM.transitions = cTransitions,
+    CM.currentState = cCurrentState,
+    CM.acceptState = cAcceptState,
+    CM.alphabet = cAlp
+  } =
+  mkTm tripleTape newTransitions cCurrentState cAcceptState cAlp
+  where
+    tripleTape = (cTape, mkTape emptySymb, mkTape emptySymb)
+    newTransitions = computeTransitions ++ outputTransitions ++ retraceTransitions
+      where 
+        computeTransitions = genComputeTransitions cTransitions
+        (outputTransitions, cf) = genOutputCopyTransitions cAcceptState cAlp
+        -- usar o cf pra gerar o retrace
+        retraceTransitions = undefined 
 
 toReversible :: CM.ClassicMachine -> RevMachine
-toReversible cm' =
-  mkTm tripleTape newTransitions (CM.currentState cm) (CM.acceptState cm) alp
-  where
-    cm = toStandard cm'
-    alp = CM.alphabet cm
-    newTransitions = computeTransitions ++ outputTransitions
-    computeTransitions = genComputeTransitions (CM.transitions cm)
-    (outputTransitions, _) = genOutputCopyTransitions (CM.acceptState cm) alp
-
-    tripleTape = (CM.tape cm, mkTape emptySymb, mkTape emptySymb)
+toReversible cm = toReversible' (toStandard cm)
 
 toStandard :: CM.ClassicMachine -> CM.ClassicMachine
 toStandard cm =

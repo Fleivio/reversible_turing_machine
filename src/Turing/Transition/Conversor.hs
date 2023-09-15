@@ -1,71 +1,82 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
 {-# HLINT ignore "Redundant flip" #-}
-module Turing.Transition.Conversor (toQuadruple, genComputeTransitions, genOutputCopyTransitions, shiftLeftTransitions) where
+module Turing.Transition.Conversor (genComputeTransitions, genOutputCopyTransitions, shiftLeftTransitions, genReverseTransitions) where
 
 import Turing.Basic.Action
 import Turing.Basic.Direction
 import Turing.Basic.State
 import Turing.Basic.Symbol
 import Turing.Transition.Transition4
+import Turing.Transition.Transition5 (Transition5 (Tr5))
 import qualified Turing.Transition.Transition5 as T5
-import Turing.Transition.Transition5 (Transition5(Tr5))
 
 toQuadruple :: T5.Transition5 -> (Transition4, Transition4)
-toQuadruple q = (first, second)
-  where
-    interState = stCombine (T5.from q) (T5.to q) (T5.rSym q)
-    first =
-      Tr4
-        { from = T5.from q,
-          inAct = (Readt (T5.rSym q), Bar, Readt emptySymb),
-          to = interState,
-          outAct = (Writet (T5.wSym q), Shift R, Writet emptySymb)
-        }
-    second =
-      Tr4
-        { from = interState,
-          inAct = (Bar, Readt emptySymb, Bar),
-          to = T5.to q,
-          outAct = (Shift (T5.dir q), Writet (stGetName interState), Shift S)
-        }
+toQuadruple
+  Tr5
+    { T5.from = stFrom,
+      T5.to = stTo,
+      T5.dir = stDir,
+      T5.rSym = stRead,
+      T5.wSym = stWrite
+    } =
+    (first, second)
+    where
+      interState = stCombine stFrom stTo stRead
+      first =
+        Tr4
+          { from = stFrom,
+            inAct = (Readt stRead, Bar, readEmpty),
+            to = interState,
+            outAct = (Writet stWrite, Shift R, writeEmpty)
+          }
+      second =
+        Tr4
+          { from = interState,
+            inAct = (Bar, readEmpty, Bar),
+            to = stTo,
+            outAct = (Shift stDir, Writet (stGetName interState), noShift)
+          }
+
+toRevQuadruple :: T5.Transition5 -> (Transition4, Transition4)
+toRevQuadruple
+  Tr5
+    { T5.from = stFrom,
+      T5.to = stTo,
+      T5.dir = stDir,
+      T5.rSym = stRead,
+      T5.wSym = stWrite
+    } = (first, second)
+    where
+      genRev x = x `stConcat` "inv"
+      stRevFrom = genRev stFrom 
+      stRevTo = genRev stTo
+      historyState = stGetName $ stCombine stRevFrom stRevTo stRead
+      interState = State $ historyState ++ "inv"
+      first =
+        Tr4
+          { from = stRevTo,
+            inAct = (Bar, Readt historyState, Bar),
+            to = interState,
+            outAct = (Shift (revDir stDir) , writeEmpty, noShift)
+          }
+      second =
+        Tr4
+          { from = interState,
+            inAct = (Readt stWrite, Bar, readEmpty),
+            to = stRevFrom,
+            outAct = (Writet stRead, Shift L , writeEmpty)
+          }
 
 genComputeTransitions :: [T5.Transition5] -> [Transition4]
 genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
-shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
-shiftLeftTransitions intermediate alph = (transitions, finalState)
-  where 
-    transitions = tr1 ++ tr2 ++ [tr3]
-    finalState = State "af"
-    st1 = State "st1"
-    tr1 = map (\x -> Tr5 
-              { 
-                T5.from = intermediate,
-                T5.rSym = x,
-                T5.to = st1,
-                T5.wSym = x,
-                T5.dir = L
-              }) alph 
-    tr2 = map (\x -> Tr5 
-              { 
-                T5.from = st1,
-                T5.rSym = x,
-                T5.to = st1,
-                T5.wSym = x,
-                T5.dir = L
-              }) $ filter (/= emptySymb) alph
-    tr3 = Tr5 
-          { 
-            T5.from = st1,
-            T5.rSym = emptySymb,
-            T5.to = finalState,
-            T5.wSym = emptySymb,
-            T5.dir = S
-          }
-    
+genReverseTransitions :: [T5.Transition5] -> [Transition4]
+genReverseTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
+  where
+    tuples = map toRevQuadruple trs5
 
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
 genOutputCopyTransitions af alphabet =
@@ -80,16 +91,16 @@ genOutputCopyTransitions af alphabet =
     afb1l =
       Tr4
         { from = af,
-          inAct = (Readt emptySymb, Bar, Readt emptySymb),
+          inAct = (readEmpty, Bar, readEmpty),
           to = b1l,
-          outAct = (Writet emptySymb, Shift S, Writet emptySymb)
+          outAct = (writeEmpty, noShift, writeEmpty)
         }
     b1lb1 =
       Tr4
         { from = b1l,
           inAct = (Bar, Bar, Bar),
           to = b1,
-          outAct = (Shift R, Shift S, Shift R)
+          outAct = (Shift R, noShift, Shift R)
         }
     b1b1l =
       flip
@@ -98,24 +109,24 @@ genOutputCopyTransitions af alphabet =
         ( \x ->
             Tr4
               { from = b1,
-                inAct = (Readt x, Bar, Readt emptySymb),
+                inAct = (Readt x, Bar, readEmpty),
                 to = b1l,
-                outAct = (Writet x, Shift S, Writet x)
+                outAct = (Writet x, noShift, Writet x)
               }
         )
     b1b2l =
       Tr4
         { from = b1,
-          inAct = (Readt emptySymb, Bar, Readt emptySymb),
+          inAct = (readEmpty, Bar, readEmpty),
           to = b2l,
-          outAct = (Writet emptySymb, Shift S, Writet emptySymb)
+          outAct = (writeEmpty, noShift, writeEmpty)
         }
     b2lb2 =
       Tr4
         { from = b2l,
           inAct = (Bar, Bar, Bar),
           to = b2,
-          outAct = (Shift L, Shift S, Shift L)
+          outAct = (Shift L, noShift, Shift L)
         }
     b2b2l =
       flip
@@ -126,13 +137,52 @@ genOutputCopyTransitions af alphabet =
               { from = b2,
                 inAct = (Readt x, Bar, Readt x),
                 to = b2l,
-                outAct = (Writet x, Shift S, Writet x)
+                outAct = (Writet x, noShift, Writet x)
               }
         )
     b2cf =
       Tr4
         { from = b2,
-          inAct = (Readt emptySymb, Bar, Readt emptySymb),
+          inAct = (readEmpty, Bar, readEmpty),
           to = cf,
-          outAct = (Writet emptySymb, Shift S, Writet emptySymb)
+          outAct = (writeEmpty, noShift, writeEmpty)
+        }
+
+shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
+shiftLeftTransitions intermediate alph = (transitions, finalState)
+  where
+    transitions = tr1 ++ tr2 ++ [tr3]
+    finalState = State "af"
+    st1 = State "st1"
+    tr1 =
+      map
+        ( \x ->
+            Tr5
+              { T5.from = intermediate,
+                T5.rSym = x,
+                T5.to = st1,
+                T5.wSym = x,
+                T5.dir = L
+              }
+        )
+        alph
+    tr2 =
+      map
+        ( \x ->
+            Tr5
+              { T5.from = st1,
+                T5.rSym = x,
+                T5.to = st1,
+                T5.wSym = x,
+                T5.dir = L
+              }
+        )
+        $ filter (/= emptySymb) alph
+    tr3 =
+      Tr5
+        { T5.from = st1,
+          T5.rSym = emptySymb,
+          T5.to = finalState,
+          T5.wSym = emptySymb,
+          T5.dir = S
         }

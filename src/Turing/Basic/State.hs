@@ -1,4 +1,4 @@
-module Turing.Basic.State (State (..), stGetName, stCombine) where
+module Turing.Basic.State (State (..), stGetName, stCombine, stConcat) where
 
 import Turing.Basic.Symbol (Symbol)
 
@@ -12,3 +12,6 @@ stGetName (State s) = s
 
 stCombine :: State -> State -> Symbol -> State
 stCombine s1 s2 s = State $ stGetName s1 <> "." <> stGetName s2 <> "." <> s
+
+stConcat :: State -> Symbol -> State
+stConcat (State s) s' = State $ s <> s'

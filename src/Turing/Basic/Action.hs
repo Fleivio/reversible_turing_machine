@@ -1,7 +1,7 @@
-module Turing.Basic.Action (OutAction (..), InAction (..)) where
+module Turing.Basic.Action (OutAction (..), InAction (..), readEmpty, writeEmpty, noShift) where
 
-import Turing.Basic.Direction (Direction)
-import Turing.Basic.Symbol (Symbol)
+import Turing.Basic.Direction (Direction(..))
+import Turing.Basic.Symbol (Symbol, emptySymb)
 
 data OutAction
   = Writet Symbol
@@ -11,6 +11,15 @@ data OutAction
 data InAction
   = Readt Symbol
   | Bar
+
+readEmpty :: InAction
+readEmpty = Readt emptySymb
+
+writeEmpty :: OutAction
+writeEmpty = Writet emptySymb
+
+noShift :: OutAction
+noShift = Shift S
 
 instance Show InAction where
   show (Readt s) = "'" ++ s ++ "'"
