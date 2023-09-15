@@ -15,7 +15,7 @@ import Turing.Basic.State
 import Turing.Basic.Symbol
 import Turing.Transition.Transition4
 import Turing.Transition.Transition5 (Transition5 (Tr5))
-import Turing.Transition.Transition5 qualified as T5
+import qualified Turing.Transition.Transition5 as T5
 
 toQuadruple :: T5.Transition5 -> (Transition4, Transition4)
 toQuadruple

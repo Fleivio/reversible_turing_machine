@@ -1,4 +1,4 @@
-module Turing.Transition.Transition4 (Transition4 (..), getTransition) where
+module Turing.Transition.Transition4 (Transition4 (..), getTransition, getLastTransition) where
 
 import Data.List (find)
 import Turing.Basic.State
@@ -34,3 +34,6 @@ hasValidCondition tr state symb3 = from tr == state && inAct tr == symb3
 
 getTransition :: State -> TripleInAction -> [Transition4] -> Maybe Transition4
 getTransition state symb3 = find (\x -> hasValidCondition x state symb3)
+
+getLastTransition :: State -> [Transition4] -> Transition4
+getLastTransition lastState trs = head $ filter (\x -> to x == lastState) trs
