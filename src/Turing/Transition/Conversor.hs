@@ -49,40 +49,8 @@ genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
-reverseQuadruple :: Transition4 -> Transition4
-reverseQuadruple
-  Tr4
-    { from = stFrom,
-      inAct = (Readt r1, Bar, _),
-      to = stTo,
-      outAct = (Writet w1, Shift R, _)
-    } =
-    Tr4
-      { from = inverseState stTo,
-        inAct = (Readt w1, Bar, readEmpty),
-        to = inverseState stFrom,
-        outAct = (Writet r1, Shift L, writeEmpty)
-      }
-reverseQuadruple
-  Tr4
-    { from = stFrom,
-      inAct = (Bar, _, Bar),
-      to = stTo,
-      outAct = (Shift dir, Writet interS, Shift S)
-    } =
-    Tr4
-      { from = inverseState stTo,
-        inAct = (Bar, Readt interS, Bar),
-        to = inverseState stFrom,
-        outAct = (Shift (revDir dir), writeEmpty, Shift S)
-      }
-reverseQuadruple _ = error "Invalid Quadruple"
-
-inverseState :: State -> State
-inverseState s = State $ "inv." ++ stGetName s
-
 genReverseTransitions :: State -> State -> [Transition4] -> [Transition4]
-genReverseTransitions cf nState trs = revTrans ++ [initial]
+genReverseTransitions cf nState trs = initial : revTrans
   where
     initial =
       Tr4
@@ -97,71 +65,32 @@ genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
 genOutputCopyTransitions af alphabet =
   ([afb1l, b1lb1, b1b2l, b2lb2, b2cf] ++ b1b1l ++ b2b2l, cf)
   where
-    alp = filter (/= emptySymb) alphabet
+    mapAlphabet = flip map $ filter (/= emptySymb) alphabet
     b1l = State "b1l"
     b1 = State "b1"
     b2l = State "b2l"
     b2 = State "b2"
     cf = State "cf"
-    afb1l =
-      Tr4
-        { from = af,
-          inAct = (readEmpty, Bar, readEmpty),
-          to = b1l,
-          outAct = (writeEmpty, noShift, writeEmpty)
-        }
-    b1lb1 =
-      Tr4
-        { from = b1l,
-          inAct = (Bar, Bar, Bar),
-          to = b1,
-          outAct = (Shift R, noShift, Shift R)
-        }
+
+    afb1l = Tr4 af empBarEmp b1l empSftEmp
+    b1lb1 = Tr4 b1l bar3 b1 (Shift R, noShift, Shift R)
+    b1b2l = Tr4 b1 empBarEmp b2l empSftEmp
+    b2lb2 = Tr4 b2l bar3 b2 (Shift L, noShift, Shift L)
     b1b1l =
-      flip
-        map
-        alp
+      mapAlphabet
         ( \x ->
-            Tr4
-              { from = b1,
-                inAct = (Readt x, Bar, readEmpty),
-                to = b1l,
-                outAct = (Writet x, noShift, Writet x)
-              }
+            Tr4 b1 (Readt x, Bar, readEmpty) b1l (Writet x, noShift, Writet x)
         )
-    b1b2l =
-      Tr4
-        { from = b1,
-          inAct = (readEmpty, Bar, readEmpty),
-          to = b2l,
-          outAct = (writeEmpty, noShift, writeEmpty)
-        }
-    b2lb2 =
-      Tr4
-        { from = b2l,
-          inAct = (Bar, Bar, Bar),
-          to = b2,
-          outAct = (Shift L, noShift, Shift L)
-        }
     b2b2l =
-      flip
-        map
-        alp
+      mapAlphabet
         ( \x ->
-            Tr4
-              { from = b2,
-                inAct = (Readt x, Bar, Readt x),
-                to = b2l,
-                outAct = (Writet x, noShift, Writet x)
-              }
+            Tr4 b2 (Readt x, Bar, Readt x) b2l (Writet x, noShift, Writet x)
         )
-    b2cf =
-      Tr4
-        { from = b2,
-          inAct = (readEmpty, Bar, readEmpty),
-          to = cf,
-          outAct = (writeEmpty, noShift, writeEmpty)
-        }
+    b2cf = Tr4 b2 empBarEmp cf empSftEmp
+  
+    empBarEmp = (readEmpty, Bar, readEmpty)
+    bar3 = (Bar, Bar, Bar)
+    empSftEmp = (writeEmpty, Shift S, writeEmpty)
 
 shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
 shiftLeftTransitions intermediate alph = (transitions, finalState)
@@ -169,35 +98,13 @@ shiftLeftTransitions intermediate alph = (transitions, finalState)
     transitions = tr1 ++ tr2 ++ [tr3]
     finalState = State "af"
     st1 = State "st1"
+    mapBAlphabet = flip map alph
+    mapAlphabet = flip map $ filter (/= emptySymb) alph
     tr1 =
-      map
-        ( \x ->
-            Tr5
-              { T5.from = intermediate,
-                T5.rSym = x,
-                T5.to = st1,
-                T5.wSym = x,
-                T5.dir = L
-              }
-        )
-        alph
+      mapBAlphabet
+        ( \x -> Tr5 intermediate x st1 x L )
     tr2 =
-      map
-        ( \x ->
-            Tr5
-              { T5.from = st1,
-                T5.rSym = x,
-                T5.to = st1,
-                T5.wSym = x,
-                T5.dir = L
-              }
-        )
-        $ filter (/= emptySymb) alph
+      mapAlphabet
+        ( \x -> Tr5 st1 x st1 x L )
     tr3 =
-      Tr5
-        { T5.from = st1,
-          T5.rSym = emptySymb,
-          T5.to = finalState,
-          T5.wSym = emptySymb,
-          T5.dir = S
-        }
+      Tr5 st1 emptySymb finalState emptySymb S

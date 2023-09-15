@@ -1,8 +1,10 @@
-module Turing.Transition.Transition4 (Transition4 (..), getTransition, getLastTransition) where
+module Turing.Transition.Transition4 (Transition4 (..), getTransition, getLastTransition, reverseQuadruple) where
 
 import Data.List (find)
 import Turing.Basic.State
 import Turing.Tape.TripleTape
+import Turing.Basic.Action
+import Turing.Basic.Direction
 
 data Transition4 = Tr4
   { from :: State,
@@ -37,3 +39,27 @@ getTransition state symb3 = find (\x -> hasValidCondition x state symb3)
 
 getLastTransition :: State -> [Transition4] -> Transition4
 getLastTransition lastState trs = head $ filter (\x -> to x == lastState) trs
+
+reverseQuadruple :: Transition4 -> Transition4
+reverseQuadruple
+  Tr4
+    { from = stFrom,
+      inAct = inAction,
+      to = stTo,
+      outAct = outAction
+    } = case (inAction, outAction) of
+      ((Readt r1, Bar, _), (Writet w1, Shift R, _))
+        -> Tr4
+          { from = inverseState stTo,
+            inAct = (Readt w1, Bar, readEmpty),
+            to = inverseState stFrom,
+            outAct = (Writet r1, Shift L, writeEmpty)
+          }
+      ((Bar, _, Bar), (Shift dir, Writet interS, Shift S))
+        -> Tr4
+            { from = inverseState stTo,
+              inAct = (Bar, Readt interS, Bar),
+              to = inverseState stFrom,
+              outAct = (Shift (revDir dir), writeEmpty, Shift S)
+            }
+      _ -> error "Invalid quadruple to reverse"
