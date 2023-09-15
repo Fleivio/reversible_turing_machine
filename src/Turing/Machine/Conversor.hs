@@ -3,9 +3,11 @@ module Turing.Machine.Conversor (toReversible, toStandard) where
 import Turing.Basic.Symbol
 import qualified Turing.Machine.ClassicMachine as CM
 import Turing.Machine.ClassicMachine (ClassicMachine(ClassTm))
+import Turing.Transition.Transition4 (from)
 import Turing.Machine.RevMachine
 import Turing.Tape.Tape
 import Turing.Transition.Conversor
+import Turing.Basic.State (State(State))
 
 toReversible' :: CM.ClassicMachine -> RevMachine
 toReversible' 
@@ -20,11 +22,11 @@ toReversible'
   where
     tripleTape = (cTape, mkTape emptySymb, mkTape emptySymb)
     newTransitions = computeTransitions ++ outputTransitions ++ retraceTransitions
-      where 
+      where
+        nState = from $ last computeTransitions
         computeTransitions = genComputeTransitions cTransitions
         (outputTransitions, cf) = genOutputCopyTransitions cAcceptState cAlp
-        -- usar o cf pra gerar o retrace
-        retraceTransitions = undefined 
+        retraceTransitions = genReverseTransitions cf nState computeTransitions
 
 toReversible :: CM.ClassicMachine -> RevMachine
 toReversible cm = toReversible' (toStandard cm)

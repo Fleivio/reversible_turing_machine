@@ -1,7 +1,13 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
 {-# HLINT ignore "Redundant flip" #-}
-module Turing.Transition.Conversor (genComputeTransitions, genOutputCopyTransitions, shiftLeftTransitions, genReverseTransitions) where
+module Turing.Transition.Conversor
+  ( genComputeTransitions,
+    genOutputCopyTransitions,
+    shiftLeftTransitions,
+    genReverseTransitions,
+  )
+where
 
 import Turing.Basic.Action
 import Turing.Basic.Direction
@@ -9,7 +15,7 @@ import Turing.Basic.State
 import Turing.Basic.Symbol
 import Turing.Transition.Transition4
 import Turing.Transition.Transition5 (Transition5 (Tr5))
-import qualified Turing.Transition.Transition5 as T5
+import Turing.Transition.Transition5 qualified as T5
 
 toQuadruple :: T5.Transition5 -> (Transition4, Transition4)
 toQuadruple
@@ -38,45 +44,54 @@ toQuadruple
             outAct = (Shift stDir, Writet (stGetName interState), noShift)
           }
 
-toRevQuadruple :: T5.Transition5 -> (Transition4, Transition4)
-toRevQuadruple
-  Tr5
-    { T5.from = stFrom,
-      T5.to = stTo,
-      T5.dir = stDir,
-      T5.rSym = stRead,
-      T5.wSym = stWrite
-    } = (first, second)
-    where
-      genRev x = x `stConcat` "inv"
-      stRevFrom = genRev stFrom 
-      stRevTo = genRev stTo
-      historyState = stGetName $ stCombine stRevFrom stRevTo stRead
-      interState = State $ historyState ++ "inv"
-      first =
-        Tr4
-          { from = stRevTo,
-            inAct = (Bar, Readt historyState, Bar),
-            to = interState,
-            outAct = (Shift (revDir stDir) , writeEmpty, noShift)
-          }
-      second =
-        Tr4
-          { from = interState,
-            inAct = (Readt stWrite, Bar, readEmpty),
-            to = stRevFrom,
-            outAct = (Writet stRead, Shift L , writeEmpty)
-          }
-
 genComputeTransitions :: [T5.Transition5] -> [Transition4]
 genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
-genReverseTransitions :: [T5.Transition5] -> [Transition4]
-genReverseTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
+reverseQuadruple :: Transition4 -> Transition4
+reverseQuadruple
+  Tr4
+    { from = stFrom,
+      inAct = (Readt r1, Bar, _),
+      to = stTo,
+      outAct = (Writet w1, Shift R, _)
+    } =
+    Tr4
+      { from = inverseState stTo,
+        inAct = (Readt w1, Bar, readEmpty),
+        to = inverseState stFrom,
+        outAct = (Writet r1, Shift L, writeEmpty)
+      }
+reverseQuadruple
+  Tr4
+    { from = stFrom,
+      inAct = (Bar, _, Bar),
+      to = stTo,
+      outAct = (Shift dir, Writet interS, Shift S)
+    } =
+    Tr4
+      { from = inverseState stTo,
+        inAct = (Bar, Readt interS, Bar),
+        to = inverseState stFrom,
+        outAct = (Shift (revDir dir), writeEmpty, Shift S)
+      }
+reverseQuadruple _ = error "Invalid Quadruple"
+
+inverseState :: State -> State
+inverseState s = State $ "inv." ++ stGetName s
+
+genReverseTransitions :: State -> State -> [Transition4] -> [Transition4]
+genReverseTransitions cf nState trs = revTrans ++ [initial]
   where
-    tuples = map toRevQuadruple trs5
+    initial =
+      Tr4
+        { from = cf,
+          inAct = (Bar, Readt (stGetName nState), Bar),
+          to = inverseState nState,
+          outAct = (Shift S, Writet emptySymb, Shift S)
+        }
+    revTrans = map reverseQuadruple trs
 
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
 genOutputCopyTransitions af alphabet =

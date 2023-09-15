@@ -15,8 +15,8 @@ data Transition4 = Tr4
 instance Show Transition4 where
   show (Tr4 f ia t oa) = leftSide ++ alignment ++ " -> " ++ rightSide
     where
-      stateAlign = 9 
-      arrowAlign = 30
+      stateAlign = 13
+      arrowAlign = 40
 
       alignment = align arrowAlign leftSide
       leftSide = "(" ++ show f ++ alig1 ++ ", " ++ show ia ++ ")"
