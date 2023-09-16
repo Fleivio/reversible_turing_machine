@@ -22,11 +22,11 @@ noShift :: OutAction
 noShift = Shift S
 
 instance Show InAction where
-  show (Readt s) = "'" ++ s ++ "'"
+  show (Readt s) = s
   show Bar = "/"
 
 instance Show OutAction where
-  show (Writet s) = "'" ++ s ++ "'"
+  show (Writet s) = s
   show (Shift d) = show d
 
 instance Eq InAction where

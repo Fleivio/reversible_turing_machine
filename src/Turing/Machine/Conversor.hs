@@ -21,7 +21,7 @@ toReversible'
   mkTm tripleTape newTransitions cCurrentState lastState cAlp
   where
     tripleTape     = (cTape, mkTape emptySymb, mkTape emptySymb)
-    lastState      = inverseState cAcceptState
+    lastState      = inverseState cCurrentState
     newTransitions = computeTransitions ++ outputTransitions ++ retraceTransitions
       where
         nState                  = from $ getTransitionThatGoesTo cAcceptState computeTransitions

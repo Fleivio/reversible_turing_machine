@@ -17,11 +17,9 @@ data ClassicMachine = ClassTm
   }
 
 instance Show ClassicMachine where
-  show tm =
-    unlines (map show (transitions tm))
-      ++ show (tape tm) ++ "\n"
+  show tm = show (tape tm) ++ "\n"
       ++ show (currentState tm) ++ "\n"
-      ++ show (counter tm)
+      ++ show (tmAccepted tm)
 
 instance TuringMachine ClassicMachine where
   tmHalt = halt
@@ -34,6 +32,10 @@ instance TuringMachine ClassicMachine where
     where
       transition = getTransition st readSymbs trs
       readSymbs  = tapeRead tp
+
+  showDefinition tm = unlines (map show (transitions tm))
+  tmAcceptSt = acceptState
+  tmCurrentSt = currentState
 
 mkTmClassic :: Tape -> [Transition5] -> State -> State -> [Symbol] -> ClassicMachine
 mkTmClassic tp trs st acc alp = ClassTm tp trs st acc 0 alp False

@@ -97,14 +97,14 @@ shiftLeftTransitions intermediate alph = (transitions, finalState)
   where
     transitions  = tr1 ++ tr2 ++ [tr3]
     finalState   = State "af"
-    st1          = State "st1"
+    sl           = State "sl"
     mapBAlphabet = flip map alph
     mapAlphabet  = flip map $ filter (/= emptySymb) alph
     tr1 =
       mapBAlphabet
-        (\x -> Tr5 intermediate x st1 x L)
+        (\x -> Tr5 intermediate x sl x L)
     tr2 =
       mapAlphabet
-        (\x -> Tr5 st1 x st1 x L)
+        (\x -> Tr5 sl x sl x L)
     tr3 =
-      Tr5 st1 emptySymb finalState emptySymb S
+      Tr5 sl emptySymb finalState emptySymb S

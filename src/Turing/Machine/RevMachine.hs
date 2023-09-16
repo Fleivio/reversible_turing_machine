@@ -1,4 +1,4 @@
-module Turing.Machine.RevMachine (RevMachine (..), tmRun, mkTm) where
+module Turing.Machine.RevMachine (RevMachine (..), mkTm) where
 
 import Turing.Basic.State
 import Turing.Basic.Symbol
@@ -17,16 +17,13 @@ data RevMachine = RevTm
   }
 
 instance Show RevMachine where
-  show (RevTm tps trs cState accState count _ _) =
-    showTrs4 trs ++ "\n"
-      ++ show t1 ++ "\n"
-      ++ show t2 ++ "\n"
-      ++ show t3 ++ "\n"
-      ++ show cState ++ "\n"
-      ++ show count ++ "\n"
-      ++ show (cState == accState)
+  show tm =
+       show t1 ++ " "
+      ++ show t2 ++ " "
+      ++ show t3 ++ " "
+      ++ show (currentState tm)
     where
-      (t1, t2, t3) = tps
+      (t1, t2, t3) = tapes tm
 
 mkTm :: TripleTape -> [Transition4] -> State -> State -> [Symbol] -> RevMachine
 mkTm tps trs st acc alp = RevTm tps trs st acc 0 alp False
@@ -42,6 +39,10 @@ instance TuringMachine RevMachine where
     where
       transition = getTransition st readSymbs trs
       readSymbs = tape3Read tps
+
+  tmAcceptSt = acceptState
+  tmCurrentSt = currentState
+  showDefinition = showTrs4 . transitions
 
 tmStep' :: RevMachine -> Transition4 -> RevMachine
 tmStep' tm (Tr4 _ _ nextState action) =

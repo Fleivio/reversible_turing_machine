@@ -11,7 +11,7 @@ data Tape = Tape
   deriving (Eq)
 
 instance Show Tape where
-  show t = show (reverse (left t)) ++ show (right t)
+  show = show . content
 
 mkTape :: Symbol -> Tape
 mkTape = Tape [] []
@@ -24,8 +24,10 @@ tapeRead (Tape _ [] b)      = b
 tapeRead (Tape _ (x : _) _) = x
 
 tapeWrite :: Tape -> Symbol -> Tape
-tapeWrite (Tape l [] b) v      = Tape l [v] b
-tapeWrite (Tape l (_ : r) b) v = Tape l (v : r) b
+tapeWrite (Tape l r b) v
+  = cleanTape $ case r of
+      [] -> Tape l [v] b
+      _  -> Tape l (v : tail r) b
 
 tapeShift :: Tape -> Direction -> Tape
 tapeShift tp S = tp
@@ -48,4 +50,4 @@ cleanTape t@(Tape l r b)
       | otherwise = list 
 
 content :: Tape -> [Symbol]
-content (Tape l r b) = [b] ++ reverse l ++ r ++ [b]
+content (Tape l r _) = reverse l ++ r

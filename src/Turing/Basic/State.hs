@@ -13,9 +13,9 @@ stGetName (State s) = s
 stCombine :: State -> State -> Symbol -> State
 stCombine s1 s2 s =
   State $
-    stGetName s1 ++ "."
-      ++ stGetName s2 ++ "."
+    stGetName s1
+      ++ stGetName s2
       ++ s
 
 inverseState :: State -> State
-inverseState s = State $ "inv." ++ stGetName s
+inverseState s = State $ "i" ++ stGetName s
