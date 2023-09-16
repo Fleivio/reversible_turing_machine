@@ -3,10 +3,11 @@ module Turing.Machine.Conversor (toReversible, toStandard) where
 import Turing.Basic.Symbol
 import qualified Turing.Machine.ClassicMachine as CM
 import Turing.Machine.ClassicMachine (ClassicMachine(ClassTm))
-import Turing.Transition.Transition4 (getLastTransition, from)
-import Turing.Machine.RevMachine
+import Turing.Transition.Transition4 (from, getTransitionThatGoesTo)
+import Turing.Machine.RevMachine (mkTm, RevMachine)
 import Turing.Tape.Tape
 import Turing.Transition.Conversor
+import Turing.Basic.State (inverseState)
 
 toReversible' :: CM.ClassicMachine -> RevMachine
 toReversible' 
@@ -17,12 +18,13 @@ toReversible'
     CM.acceptState  = cAcceptState,
     CM.alphabet     = cAlp
   } =
-  mkTm tripleTape newTransitions cCurrentState cAcceptState cAlp
+  mkTm tripleTape newTransitions cCurrentState lastState cAlp
   where
     tripleTape     = (cTape, mkTape emptySymb, mkTape emptySymb)
+    lastState      = inverseState cAcceptState
     newTransitions = computeTransitions ++ outputTransitions ++ retraceTransitions
       where
-        nState                  = from $ getLastTransition cAcceptState computeTransitions
+        nState                  = from $ getTransitionThatGoesTo cAcceptState computeTransitions
         computeTransitions      = genComputeTransitions cTransitions
         (outputTransitions, cf) = genOutputCopyTransitions cAcceptState cAlp
         retraceTransitions      = genReverseTransitions cf nState computeTransitions

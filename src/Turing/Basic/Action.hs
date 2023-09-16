@@ -1,6 +1,6 @@
 module Turing.Basic.Action (OutAction (..), InAction (..), readEmpty, writeEmpty, noShift) where
 
-import Turing.Basic.Direction (Direction(..))
+import Turing.Basic.Direction (Direction (..))
 import Turing.Basic.Symbol (Symbol, emptySymb)
 
 data OutAction

@@ -28,11 +28,24 @@ tapeWrite (Tape l [] b) v      = Tape l [v] b
 tapeWrite (Tape l (_ : r) b) v = Tape l (v : r) b
 
 tapeShift :: Tape -> Direction -> Tape
-tapeShift (Tape [] rs b) L       = Tape [] (b : rs) b
-tapeShift (Tape ls [] b) R       = Tape (b : ls) [] b
-tapeShift (Tape (l : ls) rs b) L = Tape ls (l : rs) b
-tapeShift (Tape ls (r : rs) b) R = Tape (r : ls) rs b
 tapeShift tp S = tp
+tapeShift (Tape l1 r1 b) d 
+  = cleanTape $ case (l1, r1, d) of
+      ([]  , rs  , L) -> Tape [] (b : rs) b
+      (ls  , []  , R) -> Tape (b : ls) [] b
+      (l:ls, rs  , L) -> Tape ls (l : rs) b
+      (ls  , r:rs, R) -> Tape (r : ls) rs b
+  
+cleanTape :: Tape -> Tape
+cleanTape t@(Tape l r b) 
+  = t {
+      left = clean l,
+      right = clean r
+    }
+  where
+    clean list
+      | all (== b) list = []
+      | otherwise = list 
 
 content :: Tape -> [Symbol]
 content (Tape l r b) = [b] ++ reverse l ++ r ++ [b]

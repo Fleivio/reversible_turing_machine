@@ -17,15 +17,16 @@ data RevMachine = RevTm
   }
 
 instance Show RevMachine where
-  show tm =
-    unlines (map show (transitions tm))
+  show (RevTm tps trs cState accState count _ _) =
+    showTrs4 trs ++ "\n"
       ++ show t1 ++ "\n"
       ++ show t2 ++ "\n"
       ++ show t3 ++ "\n"
-      ++ show (currentState tm) ++ "\n"
-      ++ show (counter tm)
+      ++ show cState ++ "\n"
+      ++ show count ++ "\n"
+      ++ show (cState == accState)
     where
-      (t1, t2, t3) = tapes tm
+      (t1, t2, t3) = tps
 
 mkTm :: TripleTape -> [Transition4] -> State -> State -> [Symbol] -> RevMachine
 mkTm tps trs st acc alp = RevTm tps trs st acc 0 alp False
@@ -51,3 +52,15 @@ tmStep' tm (Tr4 _ _ nextState action) =
     }
   where
     newTapes = tape3Perform (tapes tm) action
+
+showTrs4 :: [Transition4] -> String
+showTrs4 trs = unlines $ map alignTr trs
+  where
+    alignTr tr = "(" ++
+                  alignF from tr ++ ", " ++ alignF inAct tr  ++ ") -> (" ++
+                  alignF to tr   ++ ", " ++ alignF outAct tr ++ ")" 
+    nSpaces n = replicate n ' '
+    alignF f tr = string ++ nSpaces (maxSize f - length string)
+      where 
+        string = show (f tr)
+    maxSize f = maximum $ map (length . show . f) trs
