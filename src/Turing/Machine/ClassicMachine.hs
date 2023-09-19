@@ -1,7 +1,8 @@
-module Turing.Machine.ClassicMachine (ClassicMachine (..), tmRun, mkTmClassic) where
+{-# LANGUAGE MultiParamTypeClasses #-}
+
+module Turing.Machine.ClassicMachine (ClassicMachine (..)) where
 
 import Turing.Basic.State
-import Turing.Basic.Symbol
 import Turing.Machine.Machine
 import Turing.Tape.Tape
 import Turing.Transition.Transition5
@@ -17,35 +18,32 @@ data ClassicMachine = ClassTm
   }
 
 instance Show ClassicMachine where
-  show tm = show (tape tm) ++ "\n"
-      ++ show (currentState tm) ++ "\n"
+  show tm =
+    show (tape tm)
+      ++ "\n"
+      ++ show (currentState tm)
+      ++ "\n"
       ++ show (tmAccepted tm)
 
-instance TuringMachine ClassicMachine where
-  tmHalt = halt
+instance TuringMachine Transition5 Tape ClassicMachine where
+  mkTm tp trs st acc alp = ClassTm tp trs st acc 0 alp False
 
-  tmStep tm | halt tm = tm
-  tmStep tm@(ClassTm tp trs st _ _ _ _) =
-    case transition of
-      Nothing -> tm {halt = True}
-      Just tr -> tmStep' tm tr
-    where
-      transition = getTransition st readSymbs trs
-      readSymbs  = tapeRead tp
+  tmHalt = halt
+  tmSetHalt tm h = tm {halt = h}
+
+  tmCurrentSt = currentState
+  tmAcceptSt = acceptState
 
   showDefinition tm = unlines (map show (transitions tm))
-  tmAcceptSt = acceptState
-  tmCurrentSt = currentState
 
-mkTmClassic :: Tape -> [Transition5] -> State -> State -> [Symbol] -> ClassicMachine
-mkTmClassic tp trs st acc alp = ClassTm tp trs st acc 0 alp False
+  tmNextTr tm = getTransition (tmCurrentSt tm) readSymbs (transitions tm)
+    where readSymbs = tapeRead (tape tm)
 
-tmStep' :: ClassicMachine -> Transition5 -> ClassicMachine
-tmStep' tm (Tr5 _ _ nextState writeSymbs dir1) =
-  tm
-    { tape         = newTape,
-      currentState = nextState,
-      counter      = counter tm + 1
-    }
-  where
-    newTape = tapeShift (tapeWrite (tape tm) writeSymbs) dir1
+  tmPerformTr tm tr =
+    tm
+      { tape = newTape,
+        currentState = to tr,
+        counter = counter tm + 1
+      }
+    where
+      newTape = tapeShift (tapeWrite (tape tm) (wSym tr)) (dir tr)

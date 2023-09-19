@@ -1,13 +1,28 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE FunctionalDependencies #-}
 module Turing.Machine.Machine (TuringMachine (..)) where
 
 import Turing.Basic.State
 
-class (Show tm) => TuringMachine tm where
+class (Show tm) => TuringMachine tr tp tm | tm -> tr, tm -> tp where
+  mkTm :: tp -> [tr] -> State -> State -> [Symbol] -> tm
+
   tmHalt :: tm -> Bool
-  tmStep :: tm -> tm
+  tmSetHalt :: tm -> Bool -> tm
 
   tmCurrentSt :: tm -> State
   tmAcceptSt :: tm -> State
+
+  showDefinition :: tm -> String
+
+  tmNextTr :: tm -> Maybe tr
+  tmPerformTr :: tm -> tr -> tm
+
+  tmStep :: tm -> tm
+  tmStep tm =
+      case tmNextTr tm of
+        Nothing -> tmSetHalt tm True
+        Just tr -> tmPerformTr tm tr
 
   tmAccepted :: tm -> Bool
   tmAccepted tm = tmCurrentSt tm == tmAcceptSt tm && tmHalt tm
@@ -24,4 +39,3 @@ class (Show tm) => TuringMachine tm where
         where 
           (st2, tm2) = tmShowRun' (tmStep tm') (show tm')
 
-  showDefinition :: tm -> String

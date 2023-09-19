@@ -1,14 +1,16 @@
-module Turing.Transition.Transition5 (Transition5 (..), hasValidCondition, getTransition) where
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
-import Data.List (find)
+module Turing.Transition.Transition5 (Transition5 (..), Transition (..)) where
+
+import Turing.Transition.Transition
 import Turing.Basic.Direction (Direction)
 import Turing.Basic.State
-import Turing.Basic.Symbol
 
 data Transition5 = Tr5
-  { from :: State,
+  { from5 :: State,
     rSym :: Symbol,
-    to :: State,
+    to5 :: State,
     wSym :: Symbol,
     dir :: Direction
   }
@@ -21,8 +23,8 @@ instance Show Transition5 where
       leftSide  = "(" ++ show f ++ ", " ++ show rs ++ ")"
       rightSide = "(" ++ show t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
 
-hasValidCondition :: Transition5 -> State -> Symbol -> Bool
-hasValidCondition tr state symb = from tr == state && rSym tr == symb
+instance Transition Transition5 Symbol where
+  hasValidCondition tr state symb = from tr == state && rSym tr == symb
 
-getTransition :: State -> Symbol -> [Transition5] -> Maybe Transition5
-getTransition state symb = find (\x -> hasValidCondition x state symb)
+  to = to5
+  from = from5

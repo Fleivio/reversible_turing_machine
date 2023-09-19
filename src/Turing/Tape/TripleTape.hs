@@ -1,7 +1,6 @@
 module Turing.Tape.TripleTape (TripleInAction, TripleOutAction, TripleTape, mkTape3, mkTape3FromLists, tape3Read, tape3Perform) where
 
 import Turing.Basic.Action
-import Turing.Basic.Symbol
 import Turing.Tape.RevTape
 
 type TripleTape = (Tape, Tape, Tape)

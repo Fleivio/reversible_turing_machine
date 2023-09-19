@@ -1,7 +1,9 @@
-module Turing.Machine.RevMachine (RevMachine (..), mkTm) where
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
+
+module Turing.Machine.RevMachine (RevMachine (..)) where
 
 import Turing.Basic.State
-import Turing.Basic.Symbol
 import Turing.Machine.Machine
 import Turing.Tape.TripleTape
 import Turing.Transition.Transition4
@@ -25,34 +27,29 @@ instance Show RevMachine where
     where
       (t1, t2, t3) = tapes tm
 
-mkTm :: TripleTape -> [Transition4] -> State -> State -> [Symbol] -> RevMachine
-mkTm tps trs st acc alp = RevTm tps trs st acc 0 alp False
 
-instance TuringMachine RevMachine where
+instance TuringMachine Transition4 TripleTape RevMachine where
+  mkTm tps trs st acc alp = RevTm tps trs st acc 0 alp False
+
   tmHalt = halt
+  tmSetHalt tm h = tm {halt = h}
 
-  tmStep tm | halt tm = tm
-  tmStep tm@(RevTm tps trs st _ _ _ _) =
-    case transition of
-      Nothing -> tm {halt = True}
-      Just tr -> tmStep' tm tr
-    where
-      transition = getTransition st readSymbs trs
-      readSymbs = tape3Read tps
-
-  tmAcceptSt = acceptState
   tmCurrentSt = currentState
-  showDefinition = showTrs4 . transitions
+  tmAcceptSt = acceptState
 
-tmStep' :: RevMachine -> Transition4 -> RevMachine
-tmStep' tm (Tr4 _ _ nextState action) =
-  tm
-    { tapes        = newTapes,
-      currentState = nextState,
-      counter      = counter tm + 1
-    }
-  where
-    newTapes = tape3Perform (tapes tm) action
+  showDefinition = showTrs4 . transitions
+  
+  tmNextTr tm = getTransition (tmCurrentSt tm) readSymbs (transitions tm)
+    where readSymbs = tape3Read (tapes tm)
+
+  tmPerformTr tm tr =
+    tm
+      { tapes        = newTapes,
+        currentState = to tr,
+        counter      = counter tm + 1
+      }
+    where
+      newTapes = tape3Perform (tapes tm) (outAct tr)
 
 showTrs4 :: [Transition4] -> String
 showTrs4 trs = unlines $ map alignTr trs

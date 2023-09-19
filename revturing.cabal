@@ -38,6 +38,7 @@ library
       Turing.Tape.Tape
       Turing.Tape.TripleTape
       Turing.Transition.Conversor
+      Turing.Transition.Transition
       Turing.Transition.Transition4
       Turing.Transition.Transition5
   other-modules:
