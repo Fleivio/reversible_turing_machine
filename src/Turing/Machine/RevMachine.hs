@@ -7,6 +7,7 @@ import Turing.Basic.State
 import Turing.Machine.Machine
 import Turing.Tape.TripleTape
 import Turing.Transition.Transition4
+import Utils
 
 data RevMachine = RevTm
   { tapes :: TripleTape,
@@ -37,7 +38,8 @@ instance TuringMachine Transition4 TripleTape RevMachine where
   tmCurrentSt = currentState
   tmAcceptSt = acceptState
 
-  showDefinition = showTrs4 . transitions
+  showDefinition tm = align (map show (transitions tm))
+  showStats tm = "Steps: " ++ show (counter tm) ++ "\nAccepted: " ++ show (tmAccepted tm)
   
   tmNextTr tm = getTransition (tmCurrentSt tm) readSymbs (transitions tm)
     where readSymbs = tape3Read (tapes tm)
@@ -50,15 +52,3 @@ instance TuringMachine Transition4 TripleTape RevMachine where
       }
     where
       newTapes = tape3Perform (tapes tm) (outAct tr)
-
-showTrs4 :: [Transition4] -> String
-showTrs4 trs = unlines $ map alignTr trs
-  where
-    alignTr tr = "(" ++
-                  alignF from tr ++ ", " ++ alignF inAct tr  ++ ") -> (" ++
-                  alignF to tr   ++ ", " ++ alignF outAct tr ++ ")" 
-    nSpaces n = replicate n ' '
-    alignF f tr = string ++ nSpaces (maxSize f - length string)
-      where 
-        string = show (f tr)
-    maxSize f = maximum $ map (length . show . f) trs

@@ -19,7 +19,7 @@ data Transition4 = Tr4
 
 instance Show Transition4 where
   show (Tr4 f ia t oa) 
-   = "(" ++ show f ++ ", " ++ show ia ++ ") -> (" ++ show t ++ ", " ++ show oa ++ ")"
+   = "(" ++ show f ++ "," ++ show ia ++ ") -> (" ++ show t ++ "," ++ show oa ++ ")"
     
 instance Transition Transition4 TripleInAction where
   hasValidCondition (Tr4 f ia _ _) state symb3 = f == state && ia == symb3

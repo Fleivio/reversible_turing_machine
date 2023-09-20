@@ -41,6 +41,7 @@ library
       Turing.Transition.Transition
       Turing.Transition.Transition4
       Turing.Transition.Transition5
+      Utils
   other-modules:
       Paths_revturing
   hs-source-dirs:

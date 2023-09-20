@@ -2,6 +2,7 @@ module Turing.Tape.TripleTape (TripleInAction, TripleOutAction, TripleTape, mkTa
 
 import Turing.Basic.Action
 import Turing.Tape.RevTape
+import Utils
 
 type TripleTape = (Tape, Tape, Tape)
 
@@ -25,8 +26,3 @@ tape3Perform :: TripleTape -> TripleOutAction -> TripleTape
 tape3Perform tapes actions =
   uncurry tapePerformOutAction <+> zipTrip tapes actions
 
-(<+>) :: (a -> b) -> (a, a, a) -> (b, b, b)
-f <+> (a, b, c) = (f a, f b, f c)
-
-zipTrip :: (a,a,a) -> (b,b,b) -> ((a,b), (a,b), (a,b))
-zipTrip (a1, a2, a3) (b1, b2, b3) = ((a1, b1), (a2, b2), (a3, b3))

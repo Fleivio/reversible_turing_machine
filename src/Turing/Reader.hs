@@ -7,14 +7,7 @@ import Turing.Machine.ClassicMachine (ClassicMachine)
 import Turing.Tape.Tape (mkTapeFromList)
 import Turing.Basic.Symbol
 import Turing.Machine.Machine
-
-replace :: (Eq a) => a -> a -> [a] -> [a]
-replace something replacement =
-  map (\x -> if x == something then replacement else x)
-
-splitBy :: Char -> String -> [String]
-splitBy by =
-  foldr (\x acc -> if x == by then "" : acc else (x : head acc) : tail acc) [""]
+import Utils
 
 mkTransition :: String -> Transition5
 mkTransition str =

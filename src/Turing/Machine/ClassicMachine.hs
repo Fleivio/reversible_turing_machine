@@ -6,6 +6,7 @@ import Turing.Basic.State
 import Turing.Machine.Machine
 import Turing.Tape.Tape
 import Turing.Transition.Transition5
+import Utils
 
 data ClassicMachine = ClassTm
   { tape :: Tape,
@@ -19,11 +20,7 @@ data ClassicMachine = ClassTm
 
 instance Show ClassicMachine where
   show tm =
-    show (tape tm)
-      ++ "\n"
-      ++ show (currentState tm)
-      ++ "\n"
-      ++ show (tmAccepted tm)
+    show (tape tm) ++ " " ++ show (currentState tm)
 
 instance TuringMachine Transition5 Tape ClassicMachine where
   mkTm tp trs st acc alp = ClassTm tp trs st acc 0 alp False
@@ -34,7 +31,8 @@ instance TuringMachine Transition5 Tape ClassicMachine where
   tmCurrentSt = currentState
   tmAcceptSt = acceptState
 
-  showDefinition tm = unlines (map show (transitions tm))
+  showDefinition tm = align (map show (transitions tm))
+  showStats tm = "Steps: " ++ show (counter tm) ++ "\nAccepted: " ++ show (tmAccepted tm)
 
   tmNextTr tm = getTransition (tmCurrentSt tm) readSymbs (transitions tm)
     where readSymbs = tapeRead (tape tm)

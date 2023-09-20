@@ -12,8 +12,8 @@ class (Show tm) => TuringMachine tr tp tm | tm -> tr, tm -> tp where
 
   tmCurrentSt :: tm -> State
   tmAcceptSt :: tm -> State
-
   showDefinition :: tm -> String
+  showStats :: tm -> String
 
   tmNextTr :: tm -> Maybe tr
   tmPerformTr :: tm -> tr -> tm
