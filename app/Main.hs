@@ -6,7 +6,7 @@ import Turing.Reader (readTm)
 
 main :: IO ()
 main = do
-  classicTm <- readTm "entrada-quintupla.txt"
+  classicTm <- readTm "definitions/bb4.txt"
   let (logC, cMachine) = tmShowRun classicTm
   let (log1, revMachine) = tmShowRun $ toReversible classicTm
 

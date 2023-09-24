@@ -11,7 +11,7 @@ data Tape = Tape
   deriving (Eq)
 
 instance Show Tape where
-  show = show . content
+  show = filter (/= '"') . show . content
 
 mkTape :: Symbol -> Tape
 mkTape = Tape [] []

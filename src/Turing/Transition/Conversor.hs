@@ -22,9 +22,9 @@ toQuadruple
     where
       interState = stCombine stFrom stTo stRead
       first =
-        Tr4 stFrom (Readt stRead, Bar, readEmpty) interState (Writet stWrite, Shift R, writeEmpty)
+        Tr4 stFrom (Rd stRead, Bar, readEmpty) interState (Wrt stWrite, Sft R, writeEmpty)
       second =
-        Tr4 interState (Bar, readEmpty, Bar) stTo (Shift stDir, Writet interState, noShift)
+        Tr4 interState (Bar, readEmpty, Bar) stTo (Sft stDir, Wrt interState, noShift)
 
 genComputeTransitions :: [Transition5] -> [Transition4]
 genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
@@ -37,9 +37,9 @@ genReverseTransitions cf nState trs = initial : revTrans
     initial =
       Tr4
         cf
-        (Bar, Readt nState, Bar)
+        (Bar, Rd nState, Bar)
         (inverseState nState)
-        (Shift Z, Writet emptySymb, Shift Z)
+        (Sft Z, Wrt emptySymb, Sft Z)
     revTrans = map reverseQuadruple trs
 
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
@@ -54,24 +54,24 @@ genOutputCopyTransitions af alphabet =
     cf = "cf"
 
     afb1l = Tr4 af empBarEmp b1l empSftEmp
-    b1lb1 = Tr4 b1l bar3 b1 (Shift R, noShift, Shift R)
+    b1lb1 = Tr4 b1l bar3 b1 (Sft R, noShift, Sft R)
     b1b2l = Tr4 b1 empBarEmp b2l empSftEmp
-    b2lb2 = Tr4 b2l bar3 b2 (Shift L, noShift, Shift L)
+    b2lb2 = Tr4 b2l bar3 b2 (Sft L, noShift, Sft L)
     b1b1l =
       mapAlphabet
         ( \x ->
-            Tr4 b1 (Readt x, Bar, readEmpty) b1l (Writet x, noShift, Writet x)
+            Tr4 b1 (Rd x, Bar, readEmpty) b1l (Wrt x, noShift, Wrt x)
         )
     b2b2l =
       mapAlphabet
         ( \x ->
-            Tr4 b2 (Readt x, Bar, Readt x) b2l (Writet x, noShift, Writet x)
+            Tr4 b2 (Rd x, Bar, Rd x) b2l (Wrt x, noShift, Wrt x)
         )
     b2cf = Tr4 b2 empBarEmp cf empSftEmp
 
     empBarEmp = (readEmpty, Bar, readEmpty)
     bar3 = (Bar, Bar, Bar)
-    empSftEmp = (writeEmpty, Shift Z, writeEmpty)
+    empSftEmp = (writeEmpty, Sft Z, writeEmpty)
 
 shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
 shiftLeftTransitions intermediate alph = (transitions, finalState)

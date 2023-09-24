@@ -37,12 +37,12 @@ reverseQuadruple
     } =
     (\(a1, a2) -> Tr4 invTo a1 invFrom a2) $
       case (inAction, outAction) of
-        ((Readt r1, Bar, _), (Writet w1, Shift R, _)) -> (,)
-          (Readt w1, Bar, readEmpty)
-          (Writet r1, Shift L, writeEmpty)
-        ((Bar, _, Bar), (Shift dir, Writet interS, Shift Z)) -> (,)
-          (Bar, Readt interS, Bar)
-          (Shift (revDir dir), writeEmpty, Shift Z)
+        ((Rd r1, Bar, _), (Wrt w1, Sft R, _)) -> (,)
+          (Rd w1 , Bar  , readEmpty)
+          (Wrt r1, Sft L, writeEmpty)
+        ((Bar, _, Bar), (Sft dir, Wrt interS, Sft Z)) -> (,)
+          (Bar, Rd interS , Bar)
+          (Sft (revDir dir), writeEmpty, Sft Z)
           
         _ -> error "Invalid quadruple to reverse"
     where
