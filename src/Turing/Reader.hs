@@ -1,6 +1,6 @@
 module Turing.Reader (readTm) where
 
-import Turing.Basic.State (State (..))
+import Turing.Basic.State 
 import Turing.Basic.Direction (Direction (L, R))
 import Turing.Transition.Transition5 (Transition5 (..))
 import Turing.Machine.ClassicMachine (ClassicMachine)
@@ -12,9 +12,9 @@ import Utils
 mkTransition :: String -> Transition5
 mkTransition str =
   Tr5
-    { from5= State $ head symbols,
+    { from5= head symbols,
       rSym = symbols !! 1,
-      to5  = State $ symbols !! 2,
+      to5  = symbols !! 2,
       wSym = symbols !! 3,
       dir  = if symbols !! 4 == "R" then R else L
     }
@@ -24,7 +24,7 @@ mkTransition str =
 mkMachineDefinition :: [String] -> ([State], [String], [String], [Transition5], String)
 mkMachineDefinition machineString = (states, alphabet, tapeAlphabet, transitions, input)
   where
-    states       = map State (words $ machineString !! 1)
+    states       = words $ machineString !! 1
     alphabet     = words $ machineString !! 2
     tapeAlphabet = words $ machineString !! 3
     transitions  = map mkTransition (init $ drop 4 machineString)

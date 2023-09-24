@@ -20,7 +20,7 @@ data ClassicMachine = ClassTm
 
 instance Show ClassicMachine where
   show tm =
-    show (tape tm) ++ " " ++ show (currentState tm)
+    show (tape tm) ++ " " ++ currentState tm
 
 instance TuringMachine Transition5 Tape ClassicMachine where
   mkTm tp trs st acc alp = ClassTm tp trs st acc 0 alp False

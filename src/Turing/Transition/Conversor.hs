@@ -24,7 +24,7 @@ toQuadruple
       first =
         Tr4 stFrom (Readt stRead, Bar, readEmpty) interState (Writet stWrite, Shift R, writeEmpty)
       second =
-        Tr4 interState (Bar, readEmpty, Bar) stTo (Shift stDir, Writet (stGetName interState), noShift)
+        Tr4 interState (Bar, readEmpty, Bar) stTo (Shift stDir, Writet interState, noShift)
 
 genComputeTransitions :: [Transition5] -> [Transition4]
 genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
@@ -37,9 +37,9 @@ genReverseTransitions cf nState trs = initial : revTrans
     initial =
       Tr4
         cf
-        (Bar, Readt (stGetName nState), Bar)
+        (Bar, Readt nState, Bar)
         (inverseState nState)
-        (Shift S, Writet emptySymb, Shift S)
+        (Shift Z, Writet emptySymb, Shift Z)
     revTrans = map reverseQuadruple trs
 
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
@@ -47,11 +47,11 @@ genOutputCopyTransitions af alphabet =
   ([afb1l, b1lb1, b1b2l, b2lb2, b2cf] ++ b1b1l ++ b2b2l, cf)
   where
     mapAlphabet = flip map $ filter (/= emptySymb) alphabet
-    b1l = State "b1l"
-    b1 = State "b1"
-    b2l = State "b2l"
-    b2 = State "b2"
-    cf = State "cf"
+    b1l = "b1l"
+    b1 = "b1"
+    b2l = "b2l"
+    b2 = "b2"
+    cf = "cf"
 
     afb1l = Tr4 af empBarEmp b1l empSftEmp
     b1lb1 = Tr4 b1l bar3 b1 (Shift R, noShift, Shift R)
@@ -71,14 +71,14 @@ genOutputCopyTransitions af alphabet =
 
     empBarEmp = (readEmpty, Bar, readEmpty)
     bar3 = (Bar, Bar, Bar)
-    empSftEmp = (writeEmpty, Shift S, writeEmpty)
+    empSftEmp = (writeEmpty, Shift Z, writeEmpty)
 
 shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
 shiftLeftTransitions intermediate alph = (transitions, finalState)
   where
     transitions = tr1 ++ tr2 ++ [tr3]
-    finalState = State "af"
-    sl = State "sl"
+    finalState = "af"
+    sl = "sl"
     mapBAlphabet = flip map alph
     mapAlphabet = flip map $ filter (/= emptySymb) alph
     tr1 =
@@ -88,4 +88,4 @@ shiftLeftTransitions intermediate alph = (transitions, finalState)
       mapAlphabet
         (\x -> Tr5 sl x sl x L)
     tr3 =
-      Tr5 sl emptySymb finalState emptySymb S
+      Tr5 sl emptySymb finalState emptySymb Z

@@ -35,9 +35,8 @@ toReversible cm = toReversible' (toStandard cm)
 toStandard :: ClassicMachine -> ClassicMachine
 toStandard cm =
   cm {
-    transitions = newTransitions,
+    transitions = transitions cm ++ slTransitions,
     acceptState = finalState
   }
   where 
-    newTransitions = transitions cm ++ slTransitions
     (slTransitions, finalState) = shiftLeftTransitions (acceptState cm) (alphabet cm) 

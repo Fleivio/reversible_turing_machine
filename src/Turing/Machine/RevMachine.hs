@@ -24,7 +24,7 @@ instance Show RevMachine where
        show t1 ++ " "
       ++ show t2 ++ " "
       ++ show t3 ++ " "
-      ++ show (currentState tm)
+      ++ currentState tm
     where
       (t1, t2, t3) = tapes tm
 

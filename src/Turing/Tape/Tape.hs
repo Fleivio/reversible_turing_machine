@@ -30,7 +30,7 @@ tapeWrite (Tape l r b) v
       _  -> Tape l (v : tail r) b
 
 tapeShift :: Tape -> Direction -> Tape
-tapeShift tp S = tp
+tapeShift tp Z = tp
 tapeShift (Tape l1 r1 b) d 
   = cleanTape $ case (l1, r1, d) of
       ([]  , rs  , L) -> Tape [] (b : rs) b

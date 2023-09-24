@@ -19,7 +19,7 @@ writeEmpty :: OutAction
 writeEmpty = Writet emptySymb
 
 noShift :: OutAction
-noShift = Shift S
+noShift = Shift Z
 
 instance Show InAction where
   show (Readt s) = s

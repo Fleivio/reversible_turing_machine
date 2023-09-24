@@ -20,8 +20,8 @@ instance Show Transition5 where
   show (Tr5 f rs t ws d) = leftSide ++ alignment ++ " -> " ++ rightSide
     where
       alignment = replicate (8 - length leftSide) ' '
-      leftSide  = "(" ++ show f ++ ", " ++ show rs ++ ")"
-      rightSide = "(" ++ show t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
+      leftSide  = "(" ++ f ++ ", " ++ show rs ++ ")"
+      rightSide = "(" ++ t ++ ", " ++ show ws ++ ", " ++ show d ++ ")"
 
 instance Transition Transition5 Symbol where
   hasValidCondition tr state symb = from tr == state && rSym tr == symb
