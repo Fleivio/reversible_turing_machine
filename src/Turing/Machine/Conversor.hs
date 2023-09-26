@@ -24,10 +24,10 @@ toReversible'
     lastState      = inverseState cCurrentState
     newTransitions = computeTransitions ++ outputTransitions ++ retraceTransitions
       where
-        nState                  = from $ getTransitionThatGoesTo cAcceptState computeTransitions
+        nStates                  = map from $ getTransitionThatGoesTo cAcceptState computeTransitions
         computeTransitions      = genComputeTransitions cTransitions
         (outputTransitions, cf) = genOutputCopyTransitions cAcceptState cAlp
-        retraceTransitions      = genReverseTransitions cf nState computeTransitions
+        retraceTransitions      = concatMap (\n -> genReverseTransitions cf n computeTransitions) nStates
 
 toReversible :: ClassicMachine -> RevMachine
 toReversible cm = toReversible' (toStandard cm)

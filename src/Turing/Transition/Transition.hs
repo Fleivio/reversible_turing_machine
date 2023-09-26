@@ -11,8 +11,8 @@ class Transition tr inAct | tr -> inAct where
     getTransition :: State -> inAct -> [tr] -> Maybe tr
     getTransition state symb3 = find (\x -> hasValidCondition x state symb3)
 
-    getTransitionThatGoesTo :: State -> [tr] -> tr
-    getTransitionThatGoesTo state trs = head $ filter (\x -> to x == state) trs
+    getTransitionThatGoesTo :: State -> [tr] -> [tr]
+    getTransitionThatGoesTo state trs = filter (\x -> to x == state) trs
 
     from :: tr -> State
     to :: tr -> State
