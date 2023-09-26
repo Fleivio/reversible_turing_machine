@@ -5,7 +5,7 @@ module Turing.Transition.Conversor
   ( genComputeTransitions,
     genOutputCopyTransitions,
     shiftLeftTransitions,
-    genReverseTransitions,
+    reverseAllQuadruples,
   )
 where
 
@@ -31,8 +31,8 @@ genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
-genReverseTransitions :: State -> State -> [Transition4] -> [Transition4]
-genReverseTransitions cf nState trs = initial : revTrans
+reverseAllQuadruples :: State -> State -> [Transition4] -> [Transition4]
+reverseAllQuadruples cf nState trs = initial : revTrans
   where
     initial =
       Tr4

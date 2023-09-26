@@ -23,28 +23,23 @@ instance Show Transition4 where
 
 instance Transition Transition4 TripleInAction where
   hasValidCondition (Tr4 f ia _ _) state symb3 = f == state && ia == symb3
-
   from = from4
   to = to4
 
 reverseQuadruple :: Transition4 -> Transition4
 reverseQuadruple
-  Tr4
-    { from4 = stFrom,
-      inAct = inAction,
-      to4 = stTo,
-      outAct = outAction
-    } =
-    (\(a1, a2) -> Tr4 invTo a1 invFrom a2) $
-      case (inAction, outAction) of
-        ((Rd r1, Bar, _), (Wrt w1, Sft R, _)) -> (,)
-          (Rd w1 , Bar  , readEmpty)
-          (Wrt r1, Sft L, writeEmpty)
-        ((Bar, _, Bar), (Sft dir, Wrt interS, Sft Z)) -> (,)
-          (Bar, Rd interS , Bar)
-          (Sft (revDir dir), writeEmpty, Sft Z)
-          
-        _ -> error "Invalid quadruple to reverse"
+  (Tr4 stFrom inAction stTo outAction)
+   = Tr4 invTo invIn invFrom invOut
     where
+      (invIn, invOut)
+       = case (inAction, outAction) of
+          ((Rd r1, Bar, _), (Wrt w1, Sft R, _)) -> (,)
+            (Rd w1 , Bar  , readEmpty)
+            (Wrt r1, Sft L, writeEmpty)
+          ((Bar, _, Bar), (Sft dir, Wrt interS, Sft Z)) -> (,)
+            (Bar, Rd interS , Bar)
+            (Sft (revDir dir), writeEmpty, Sft Z)
+          _ -> error "Invalid quadruple to reverse"
+
       invFrom = inverseState stFrom
       invTo = inverseState stTo

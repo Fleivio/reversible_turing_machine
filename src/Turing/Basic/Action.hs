@@ -12,6 +12,11 @@ data InAction
   = Rd Symbol
   | Bar
 
+instance Eq InAction where
+  (Rd s1) == (Rd s2) = s1 == s2
+  Bar == _ = True
+  _ == Bar = True
+
 readEmpty :: InAction
 readEmpty = Rd emptySymb
 
@@ -28,8 +33,3 @@ instance Show InAction where
 instance Show OutAction where
   show (Wrt s) = s
   show (Sft d) = show d
-
-instance Eq InAction where
-  (Rd s1) == (Rd s2) = s1 == s2
-  Bar == _ = True
-  _ == Bar = True
