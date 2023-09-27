@@ -78,16 +78,34 @@ genOutputCopyTransitions af alphabet =
 shiftLeftTransitions :: State -> [Symbol] -> ([Transition5], State)
 shiftLeftTransitions intermediate alph = (transitions, finalState)
   where
-    transitions = tr1 ++ tr2 ++ [tr3]
+    transitions =  sl1b : sl2b : sr2b : sl3b : tr1 ++ sl1a ++ sr2a ++ sl2a ++ sl3a
     finalState = "af"
-    sl = "sl"
+    sl1 = "sl1"
+    sl2 = "sl2"
+    sl3 = "sl3"
+    sr2 = "sr2"
     mapBAlphabet = flip map alph
     mapAlphabet = flip map $ filter (/= emptySymb) alph
     tr1 =
       mapBAlphabet
-        (\x -> Tr5 intermediate x sl x L)
-    tr2 =
+        $ \x -> Tr5 intermediate x sl1 x L
+    sl1a =
       mapAlphabet
-        (\x -> Tr5 sl x sl x L)
-    tr3 =
-      Tr5 sl emptySymb finalState emptySymb Z
+        $ \x -> Tr5 sl1 x sl2 x L
+    sl1b =
+      Tr5 sl1 emptySymb sl3 emptySymb L
+    sl3b =
+      Tr5 sl3 emptySymb sr2 emptySymb R
+    sl3a =
+      mapAlphabet
+        $ \x -> Tr5 sl3 x sl2 x L
+    sl2a =
+      mapAlphabet
+        $ \x -> Tr5 sl2 x sl2 x L
+    sl2b =
+      Tr5 sl2 emptySymb finalState emptySymb Z
+    sr2b = 
+      Tr5 sr2 emptySymb sr2 emptySymb R
+    sr2a = 
+      mapAlphabet
+        $ \x -> Tr5 sr2 x finalState x L
