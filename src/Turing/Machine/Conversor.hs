@@ -29,7 +29,7 @@ genNewTransitions ClassTm { transitions = cTransitions,
     nStates = map from $ getTransitionThatGoesTo cAccSt computeTransitions
     computeTransitions = genComputeTransitions cTransitions
     (outputTransitions, cf) = genOutputCopyTransitions cAccSt cAlp
-    retraceTransitions = concatMap (\n -> reverseAllQuadruples cf n computeTransitions) nStates
+    retraceTransitions = reverseAllQuadruples cf nStates computeTransitions
 
 toReversible :: ClassicMachine -> RevMachine
 toReversible cm = toReversible' (toStandard cm)

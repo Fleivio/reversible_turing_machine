@@ -40,10 +40,8 @@ tapeShift (Tape l1 r1 b) d
   
 cleanTape :: Tape -> Tape
 cleanTape t@(Tape l r b) 
-  = t {
-      left = clean l,
-      right = clean r
-    }
+  = t { left = clean l,
+        right = clean r }
   where
     clean list
       | all (== b) list = []

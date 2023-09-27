@@ -21,7 +21,7 @@ data RevMachine = RevTm
 
 instance Show RevMachine where
   show tm =
-       show t1 ++ " "
+      show t1 ++ " "
       ++ show t2 ++ " "
       ++ show t3 ++ " "
       ++ currentState tm
@@ -44,11 +44,9 @@ instance TuringMachine Transition4 TripleTape RevMachine where
   tmNextTr tm = getTransition (tmCurrentSt tm) readSymbs (transitions tm)
     where readSymbs = tape3Read (tapes tm)
 
-  tmPerformTr tm tr =
-    tm
-      { tapes        = newTapes,
-        currentState = to tr,
-        counter      = counter tm + 1
-      }
+  tmPerformTr tm tr
+    = tm { tapes = newTapes,
+           currentState = to tr,
+           counter      = counter tm + 1 }
     where
       newTapes = tape3Perform (tapes tm) (outAct tr)

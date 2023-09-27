@@ -21,12 +21,8 @@ splitF f =
   foldr (\x acc -> if f x then [x] : acc else (x : head acc) : tail acc) [[]]
 
 align :: [String] -> String
-align = addSpaces . unlines . allsTr . trimSpaces
+align = unlines . allsTr . trimSpaces
   where
-    addSpaces str = case str of 
-      (a : xs) | isDelim a -> a : ' ' : addSpaces xs
-      (a : xs) -> a : addSpaces xs
-      [] -> []
     trimSpaces = map $ filter (/= ' ')
     isDelim x = x `elem` [')', '(', ',']
     allsTr a = map concat . transpose . map aligAll . transpose $ map splits a

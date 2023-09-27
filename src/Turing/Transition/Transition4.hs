@@ -40,6 +40,5 @@ reverseQuadruple
             (Bar, Rd interS , Bar)
             (Sft (revDir dir), writeEmpty, Sft Z)
           _ -> error "Invalid quadruple to reverse"
-
       invFrom = inverseState stFrom
       invTo = inverseState stTo

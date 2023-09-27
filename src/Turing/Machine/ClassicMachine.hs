@@ -37,11 +37,9 @@ instance TuringMachine Transition5 Tape ClassicMachine where
   tmNextTr tm = getTransition (tmCurrentSt tm) readSymbs (transitions tm)
     where readSymbs = tapeRead (tape tm)
 
-  tmPerformTr tm tr =
-    tm
-      { tape = newTape,
-        currentState = to tr,
-        counter = counter tm + 1
-      }
+  tmPerformTr tm tr
+    = tm  { tape = newTape,
+            currentState = to tr,
+            counter = counter tm + 1 }
     where
       newTape = tapeShift (tapeWrite (tape tm) (wSym tr)) (dir tr)

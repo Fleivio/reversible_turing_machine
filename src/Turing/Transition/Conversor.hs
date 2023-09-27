@@ -31,15 +31,17 @@ genComputeTransitions trs5 = concatMap (\(x, y) -> [x, y]) tuples
   where
     tuples = map toQuadruple trs5
 
-reverseAllQuadruples :: State -> State -> [Transition4] -> [Transition4]
-reverseAllQuadruples cf nState trs = initial : revTrans
+reverseAllQuadruples :: State -> [State] -> [Transition4] -> [Transition4]
+reverseAllQuadruples cf nStates trs = initials ++ revTrans
   where
-    initial =
-      Tr4
-        cf
-        (Bar, Rd nState, Bar)
-        (inverseState nState)
-        (Sft Z, Wrt emptySymb, Sft Z)
+    initials = map 
+      (\n -> 
+        Tr4
+          cf
+          (Bar, Rd n, Bar)
+          (inverseState n)
+          (Sft Z, Wrt emptySymb, Sft Z)
+      ) nStates
     revTrans = map reverseQuadruple trs
 
 genOutputCopyTransitions :: State -> [Symbol] -> ([Transition4], State)
