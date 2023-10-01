@@ -5,11 +5,12 @@ import Turing.Machine.ClassicMachine (ClassicMachine)
 import Turing.Machine.Machine (TuringMachine (showDefinition, tmShowRun, showStats))
 import Turing.Reader (readTm)
 import System.Environment
+import Log
 
 runAll :: ClassicMachine -> IO ()
 runAll classicTm = do
-  let (logC, cMachine) = tmShowRun classicTm
-      (log1, revMachine) = tmShowRun $ toReversible classicTm
+  let Log logC cMachine = tmShowRun classicTm
+      Log log1 revMachine = tmShowRun $ toReversible classicTm
 
   writeFile "saida.txt" $
     "Definição da máquina clássica:\n"
@@ -29,4 +30,6 @@ main = do
     [fileName] -> do
       classicTm <- readTm fileName
       runAll classicTm
-    _ -> putStrLn "Use: stack exec Program arq" 
+    _ -> do
+      classicTm <- readTm "bb4.txt"
+      runAll classicTm

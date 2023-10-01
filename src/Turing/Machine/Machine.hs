@@ -35,4 +35,4 @@ class (Show tm) => TuringMachine tr tp tm | tm -> tr, tm -> tp where
 
   tmShowRun :: tm -> Log tm
   tmShowRun tm' | tmHalt tm' = pure tm'
-  tmShowRun tm' = tmShowRun =<< Log (show tm') tm'
+  tmShowRun tm' = tmShowRun =<< Log (show tm') (tmStep tm')
