@@ -31,5 +31,5 @@ main = do
       classicTm <- readTm fileName
       runAll classicTm
     _ -> do
-      classicTm <- readTm "entrada-quintupla.txt"
+      classicTm <- readTm "bb4.txt"
       runAll classicTm
