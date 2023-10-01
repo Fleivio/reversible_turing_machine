@@ -10,7 +10,6 @@ import Turing.Transition.Conversor
 import Turing.Transition.Transition
 import Turing.Transition.Transition4
 
-import Debug.Trace
 
 toReversible' :: ClassicMachine -> RevMachine
 toReversible' c@ClassTm { tape = cTape,
@@ -26,8 +25,7 @@ genNewTransitions :: ClassicMachine -> [Transition4]
 genNewTransitions ClassTm { transitions = cTransitions,
                             acceptState = cAccSt,
                             alphabet = cAlp }
-                  = trace (show nStates)
-                     computeTransitions ++ outputTransitions ++ retraceTransitions
+                  = computeTransitions ++ outputTransitions ++ retraceTransitions
   where
     nStates = map from $ getTransitionThatGoesTo cAccSt computeTransitions
     computeTransitions = genComputeTransitions cTransitions
