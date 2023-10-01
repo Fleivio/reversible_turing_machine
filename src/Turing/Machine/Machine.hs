@@ -1,8 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FunctionalDependencies #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 module Turing.Machine.Machine (TuringMachine (..)) where
 
 import Turing.Basic.State
+import Log
 
 class (Show tm) => TuringMachine tr tp tm | tm -> tr, tm -> tp where
   mkTm :: tp -> [tr] -> State -> State -> [Symbol] -> tm
@@ -31,11 +33,6 @@ class (Show tm) => TuringMachine tr tp tm | tm -> tr, tm -> tp where
   tmRun tm | tmHalt tm = tm
   tmRun tm = tmRun . tmStep $ tm
 
-  tmShowRun :: tm -> (String, tm)
-  tmShowRun tm = tmShowRun' tm ""
-    where
-      tmShowRun' tm' str | tmHalt tm' = (str ++ "\n" ++ show tm', tm')
-      tmShowRun' tm' str = (str ++ "\n" ++ st2, tm2)
-        where 
-          (st2, tm2) = tmShowRun' (tmStep tm') (show tm')
-
+  tmShowRun :: tm -> Log tm
+  tmShowRun tm' | tmHalt tm' = pure tm'
+  tmShowRun tm' = tmShowRun =<< Log (show tm') tm'
