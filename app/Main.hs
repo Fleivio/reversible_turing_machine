@@ -2,15 +2,14 @@ module Main (main) where
 
 import Turing.Machine.Conversor
 import Turing.Machine.ClassicMachine (ClassicMachine)
-import Turing.Machine.Machine (TuringMachine (showDefinition, tmShowRun, showStats))
+import Turing.Machine.Machine
 import Turing.Reader (readTm)
 import System.Environment
-import Log
 
 runAll :: ClassicMachine -> IO ()
 runAll classicTm = do
-  let Log logC cMachine = tmShowRun classicTm
-      Log log1 revMachine = tmShowRun $ toReversible classicTm
+  let (cMachine, logC) = runWriter $ tmShowRun classicTm
+      (revMachine, log1) = runWriter . tmShowRun $ toReversible classicTm
 
   writeFile "saida.txt" $
     "Definição da máquina clássica:\n"

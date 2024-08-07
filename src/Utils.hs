@@ -34,5 +34,3 @@ align = unlines . allsTr . trimSpaces
               | length str' <= 1 = str' ++ replicate (n - length str') ' '
               | otherwise = init str' ++ replicate (n - length str') ' ' ++ [last str']
         splits = splitF isDelim
-          
-
